@@ -33,7 +33,7 @@ namespace UriGeneration.Internal
         public Values ExtractValues<TController>(
             LambdaExpression action,
             string? endpointName = null,
-            LinkBuilderOptions? options = null)
+            UriOptions? options = null)
                 where TController : ControllerBase
         {
             if (action == null)
@@ -41,7 +41,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            options ??= LinkBuilderOptions.Default;
+            options ??= UriOptions.Default;
 
             var methodCall = ExtractMethodCall(action);
 
@@ -258,7 +258,7 @@ namespace UriGeneration.Internal
             ParameterInfo[] methodParameters,
             ReadOnlyCollection<Expression> methodCallArguments,
             string? controllerAreaName,
-            LinkBuilderOptions options)
+            UriOptions options)
         {
             var routeValues = new RouteValueDictionary { };
 
@@ -289,7 +289,7 @@ namespace UriGeneration.Internal
 
         private static object EvaluateExpression(
             Expression expression,
-            LinkBuilderOptions options)
+            UriOptions options)
         {
             if (!options.BypassCachedExpressionCompiler)
             {

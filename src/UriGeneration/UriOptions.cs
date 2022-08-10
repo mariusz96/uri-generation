@@ -2,9 +2,9 @@
 
 namespace UriGeneration
 {
-    public class LinkBuilderOptions : LinkOptions
+    public class UriOptions : LinkOptions
     {
-        public static LinkBuilderOptions Default { get; } =
+        public static UriOptions Default { get; } =
             new()
             {
                 BypassCachedExpressionCompiler = false,

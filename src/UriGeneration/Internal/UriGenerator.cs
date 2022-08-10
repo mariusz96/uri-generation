@@ -6,12 +6,12 @@ using System.Linq.Expressions;
 
 namespace UriGeneration.Internal
 {
-    internal class LinkBuilder : ILinkBuilder
+    internal class UriGenerator : IUriGenerator
     {
         private readonly LinkGenerator _linkGenerator;
         private readonly IValuesExtractor _valuesExtractor;
 
-        public LinkBuilder(
+        public UriGenerator(
             LinkGenerator linkGenerator,
             IValuesExtractor valuesExtractor)
         {
@@ -29,13 +29,13 @@ namespace UriGeneration.Internal
             _valuesExtractor = valuesExtractor;
         }
 
-        public string BuildPathFromExpression<TController>(
+        public string GetPathByExpression<TController>(
            HttpContext httpContext,
            Expression<Action<TController>> action,
            string? endpointName = null,
            PathString? pathBase = null,
            FragmentString fragment = default,
-           LinkBuilderOptions? options = null)
+           UriOptions? options = null)
                where TController : ControllerBase
         {
             if (httpContext == null)
@@ -48,7 +48,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return BuildPathFromExpressionCore<TController>(
+            return GetPathByExpressionCore<TController>(
                 httpContext,
                 action,
                 endpointName,
@@ -57,13 +57,13 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        public string BuildPathFromExpression<TController>(
+        public string GetPathByExpression<TController>(
             HttpContext httpContext,
             Expression<Func<TController, object?>> action,
             string? endpointName = null,
             PathString? pathBase = null,
             FragmentString fragment = default,
-            LinkBuilderOptions? options = null)
+            UriOptions? options = null)
                 where TController : ControllerBase
         {
             if (httpContext == null)
@@ -76,7 +76,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return BuildPathFromExpressionCore<TController>(
+            return GetPathByExpressionCore<TController>(
                 httpContext,
                 action,
                 endpointName,
@@ -85,7 +85,7 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        public string BuildUriFromExpression<TController>(
+        public string GetUriByExpression<TController>(
             HttpContext httpContext,
             Expression<Action<TController>> action,
             string? endpointName = null,
@@ -93,7 +93,7 @@ namespace UriGeneration.Internal
             HostString? host = null,
             PathString? pathBase = null,
             FragmentString fragment = default,
-            LinkBuilderOptions? options = null)
+            UriOptions? options = null)
                 where TController : ControllerBase
         {
             if (httpContext == null)
@@ -106,7 +106,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return BuildUriFromExpressionCore<TController>(
+            return GetUriByExpressionCore<TController>(
                 httpContext,
                 action,
                 endpointName,
@@ -117,7 +117,7 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        public string BuildUriFromExpression<TController>(
+        public string GetUriByExpression<TController>(
             HttpContext httpContext,
             Expression<Func<TController, object?>> action,
             string? endpointName = null,
@@ -125,7 +125,7 @@ namespace UriGeneration.Internal
             HostString? host = null,
             PathString? pathBase = null,
             FragmentString fragment = default,
-            LinkBuilderOptions? options = null)
+            UriOptions? options = null)
                 where TController : ControllerBase
         {
             if (httpContext == null)
@@ -138,7 +138,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return BuildUriFromExpressionCore<TController>(
+            return GetUriByExpressionCore<TController>(
                 httpContext,
                 action,
                 endpointName,
@@ -149,13 +149,13 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        private string BuildPathFromExpressionCore<TController>(
+        private string GetPathByExpressionCore<TController>(
             HttpContext httpContext,
             LambdaExpression action,
             string? endpointName = null,
             PathString? pathBase = null,
             FragmentString fragment = default,
-            LinkBuilderOptions? options = null)
+            UriOptions? options = null)
                 where TController : ControllerBase
         {
             if (httpContext == null)
@@ -206,7 +206,7 @@ namespace UriGeneration.Internal
             return path;
         }
 
-        private string BuildUriFromExpressionCore<TController>(
+        private string GetUriByExpressionCore<TController>(
             HttpContext httpContext,
             LambdaExpression action,
             string? endpointName = null,
@@ -214,7 +214,7 @@ namespace UriGeneration.Internal
             HostString? host = null,
             PathString? pathBase = null,
             FragmentString fragment = default,
-            LinkBuilderOptions? options = null)
+            UriOptions? options = null)
                 where TController : ControllerBase
         {
             if (httpContext == null)

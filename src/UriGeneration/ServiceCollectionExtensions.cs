@@ -8,24 +8,24 @@ namespace UriGeneration
     public static class ServiceCollectionExtensions
     {
         private static readonly Action<MethodCacheOptions>
-            DefaultConfigureOptions = o =>
+            DefaultConfigureCache = o =>
             {
                 o.SizeLimit = 100;
                 o.CompactionPercentage = 0.75;
             };
 
-        public static IServiceCollection AddLinkBuilding(
+        public static IServiceCollection AddUriGeneration(
             this IServiceCollection services,
-            Action<MethodCacheOptions>? configureOptions = null)
+            Action<MethodCacheOptions>? configureCache = null)
         {
-            configureOptions ??= DefaultConfigureOptions;
+            configureCache ??= DefaultConfigureCache;
 
             services.AddOptions();
-            services.Configure(configureOptions);
+            services.Configure(configureCache);
             services
                 .TryAddSingleton<IMethodCacheAccessor, MethodCacheAccessor>();
             services.TryAddSingleton<IValuesExtractor, ValuesExtractor>();
-            services.TryAddSingleton<ILinkBuilder, LinkBuilder>();
+            services.TryAddSingleton<IUriGenerator, UriGenerator>();
 
             return services;
         }
