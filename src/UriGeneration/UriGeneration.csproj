@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>Mariusz Stępień</Authors>
+    <Description>Strongly typed, cached URL generation for ASP.NET Core using lambda expressions</Description>
+    <PackageProjectUrl>https://github.com/mariusz96/uri-generation</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/mariusz96/uri-generation</RepositoryUrl>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>UriGeneration</PackageId>
+    <Version>0.1.75</Version>
+    <Copyright>Mariusz Stępień</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>aspnetcore;aspnet;asp;net;core;routing;route;routes;url;urls;link;links;uri;uris;href;hrefs;hyper;reference;references;hyperlink;hyperlinks;path;paths;building;builder;builders;generation;generator;generators;linking;linker;linkers;helping;helper;helpers;linkgenerator;urlhelper;hateoas;hypermedia;as;the;engine;of;application;state;rest;restful;api;apis;webapi;webapis;mvc;web;service;services;webservice;webservices;resource;resources;representation;representations;discovery;discoverability;discoverable;discover;discovering;navigation;navigable;navigate;navigating;strongly;typed;expression;expressions;tree;trees;lambda;lambdas;cache;cached;caching;di;dependency;injection;ioc;inversion;of;control;rfc;5988;level3;level;3;roy;fielding;leonard;richardson;maturity;model</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
