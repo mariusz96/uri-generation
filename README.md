@@ -5,11 +5,6 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
     c => c.GetInvoice(2));
 ```
-```C#
-_uriGenerator.GetUriByExpression(
-    httpContext,
-    (InvoicesController c) => c.GetInvoice(2));
-```
 
 ## Features:
 - Extracts action name, controller name, and route values from expression
