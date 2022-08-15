@@ -22,8 +22,7 @@ namespace UriGeneration
 
             services.AddOptions();
             services.Configure(configureCache);
-            services
-                .TryAddSingleton<IMethodCacheAccessor, MethodCacheAccessor>();
+            services.TryAddSingleton<IMethodCacheAccessor, MethodCacheAccessor>();
             services.TryAddSingleton<IValuesExtractor, ValuesExtractor>();
             services.TryAddSingleton<IUriGenerator, UriGenerator>();
 
