@@ -339,8 +339,6 @@ namespace UriGeneration.Internal
                 routeValues.Add(AreaKey, controllerAreaName);
             }
 
-
-            _logger.RouteValuesExtracted();
             return routeValues;
         }
 
