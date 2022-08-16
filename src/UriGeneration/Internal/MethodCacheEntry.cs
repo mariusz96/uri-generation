@@ -5,7 +5,8 @@ namespace UriGeneration.Internal
 {
     internal class MethodCacheEntry
     {
-        private static readonly MethodCacheEntry InvalidInstance = new(false);
+        private static readonly MethodCacheEntry InvalidInstance =
+            new(isValid: false);
 
         [MemberNotNull(
             nameof(MethodName),
@@ -37,7 +38,8 @@ namespace UriGeneration.Internal
             ParameterInfo[] methodParameters,
             string? controllerAreaName = null)
         {
-            return new(true,
+            return new(
+                isValid: true,
                 methodName,
                 controllerName,
                 methodParameters,
