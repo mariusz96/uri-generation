@@ -134,6 +134,7 @@ namespace UriGeneration.Internal
                 }
 
                 _logger.ValuesExtracted();
+
                 values = new Values(
                     methodName,
                     controllerName,
