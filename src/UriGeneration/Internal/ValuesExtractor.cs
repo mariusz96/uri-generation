@@ -97,6 +97,12 @@ namespace UriGeneration.Internal
                 if (!ValidateMethodPolymorphism(method, controller)
                     || !ValidateEnpointName(endpointName, method))
                 {
+                    if (options?.BypassMethodCache is not true)
+                    {
+                        var invalidEntry = MethodCacheEntry.Invalid();
+                        _methodCache.Set(key, invalidEntry, CacheEntryOptions);
+                    }
+
                     return false;
                 }
 
@@ -105,12 +111,6 @@ namespace UriGeneration.Internal
                 if (!TryExtractMethodName(method, out var methodName)
                     || !TryExtractControllerName(controller, out var controllerName))
                 {
-                    if (options?.BypassMethodCache is not true)
-                    {
-                        var invalidEntry = MethodCacheEntry.Invalid();
-                        _methodCache.Set(key, invalidEntry, CacheEntryOptions);
-                    }
-
                     return false;
                 }
 
