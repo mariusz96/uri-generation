@@ -4,9 +4,9 @@ namespace UriGeneration.Internal
 {
     internal class Values
     {
-        public string ActionName { get; set; }
-        public string ControllerName { get; set; }
-        public RouteValueDictionary RouteValues { get; set; }
+        public string ActionName { get; }
+        public string ControllerName { get; }
+        public RouteValueDictionary RouteValues { get; }
 
         public Values(
             string actionName,

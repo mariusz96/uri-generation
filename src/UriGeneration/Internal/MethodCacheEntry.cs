@@ -4,10 +4,10 @@ namespace UriGeneration.Internal
 {
     internal class MethodCacheEntry
     {
-        public string MethodName { get; set; }
-        public string ControllerName { get; set; }
-        public ParameterInfo[] MethodParameters { get; set; }
-        public string? ControllerAreaName { get; set; }
+        public string MethodName { get; }
+        public string ControllerName { get; }
+        public ParameterInfo[] MethodParameters { get; }
+        public string? ControllerAreaName { get; }
 
         public MethodCacheEntry(
             string methodName,
