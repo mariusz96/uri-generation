@@ -7,6 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace UriGeneration.Internal
 {
@@ -15,23 +16,40 @@ namespace UriGeneration.Internal
         private const string ControllerSuffix = "Controller";
         private const string AsyncSuffix = "Async";
         private const string AreaKey = "area";
+
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
 
-        private readonly IMemoryCache _methodCache;
+        private static readonly UriOptions DefaultOptions = new()
+        {
+            BypassMethodCache = false,
+            BypassCachedExpressionCompiler = false
+        };
 
-        public ValuesExtractor(IMethodCacheAccessor methodCacheAccessor)
+        private readonly IMemoryCache _methodCache;
+        private readonly ILogger<ValuesExtractor> _logger;
+
+        public ValuesExtractor(
+            IMethodCacheAccessor methodCacheAccessor,
+            ILogger<ValuesExtractor> logger)
         {
             if (methodCacheAccessor == null)
             {
                 throw new ArgumentNullException(nameof(methodCacheAccessor));
             }
 
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
             _methodCache = methodCacheAccessor.Cache;
+            _logger = logger;
         }
 
-        public Values ExtractValues<TController>(
+        public bool TryExtractValues<TController>(
             LambdaExpression action,
+            out Values values,
             string? endpointName = null,
             UriOptions? options = null)
                 where TController : ControllerBase
@@ -41,134 +59,180 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            options ??= UriOptions.Default;
+            values = default!;
 
-            var methodCall = ExtractMethodCall(action);
-
-            var method = ExtractMethod(methodCall);
-
-            var controller = ExtractController<TController>();
-
-            var key = (method, controller, endpointName);
-
-            if (!options.BypassMethodCache
-                && _methodCache.TryGetValue(key, out MethodCacheEntry entry))
+            try
             {
-                var entryRouteValues = ExtractRouteValues(
-                    entry.MethodParameters,
+                options ??= DefaultOptions;
+
+                options.BypassMethodCache ??= DefaultOptions.BypassMethodCache;
+                options.BypassCachedExpressionCompiler ??=
+                    DefaultOptions.BypassCachedExpressionCompiler;
+
+                if (!TryExtractMethodCall(action, out var methodCall)
+                    || !TryExtractMethod(methodCall, out var method)
+                    || !TryExtractController<TController>(out var controller))
+                {
+                    return false;
+                }
+
+                if (!options.BypassMethodCache!.Value)
+                {
+                    var key = (method, controller, endpointName);
+                    if (_methodCache.TryGetValue(key, out MethodCacheEntry entry))
+                    {
+                        if (entry.IsValid)
+                        {
+                            var entryRouteValues = ExtractRouteValues(
+                                entry.MethodParameters,
+                                methodCall.Arguments,
+                                entry.ControllerAreaName,
+                                options);
+
+                            values = new Values(
+                                entry.MethodName,
+                                entry.ControllerName,
+                                entryRouteValues);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                if (!ValidateMethodPolymorphism(method, controller)
+                    || !ValidateEnpointName(endpointName, method))
+                {
+                    if (!options.BypassMethodCache!.Value)
+                    {
+                        var key = (method, controller, endpointName);
+                        _methodCache.Set(
+                            key,
+                            new MethodCacheEntry(),
+                            CacheEntryOptions);
+                    }
+
+                    return false;
+                }
+
+                var methodParameters = method.GetParameters();
+
+                if (!TryExtractMethodName(method, out var methodName)
+                    || !TryExtractControllerName(controller, out var controllerName))
+                {
+                    return false;
+                }
+
+                string? controllerAreaName = ExtractControllerAreaName(
+                    controller);
+
+                var routeValues = ExtractRouteValues(
+                    methodParameters,
                     methodCall.Arguments,
-                    entry.ControllerAreaName,
+                    controllerAreaName,
                     options);
 
-                return new Values(
-                    entry.MethodName,
-                    entry.ControllerName,
-                    entryRouteValues);
-            }
+                if (!options.BypassMethodCache!.Value)
+                {
+                    var key = (method, controller, endpointName);
+                    var validEntry = new MethodCacheEntry(
+                        methodName,
+                        controllerName,
+                        methodParameters,
+                        controllerAreaName);
 
-            ValidateMethodPolymorphism(method, controller);
+                    _methodCache.Set(key, validEntry, CacheEntryOptions);
+                }
 
-            ValidateEnpointName(endpointName, method);
-
-            var methodParameters = method.GetParameters();
-
-            string methodName = ExtractMethodName(method);
-
-            string controllerName = ExtractControllerName(controller);
-
-            string? controllerAreaName = ExtractControllerAreaName(controller);
-
-            var routeValues = ExtractRouteValues(
-                methodParameters,
-                methodCall.Arguments,
-                controllerAreaName,
-                options);
-
-            if (!options.BypassMethodCache)
-            {
-                var newEntry = new MethodCacheEntry(
+                values = new Values(
                     methodName,
                     controllerName,
-                    methodParameters,
-                    controllerAreaName);
-
-                _methodCache.Set(key, newEntry, CacheEntryOptions);
+                    routeValues);
+                _logger.ValuesExtracted();
+                return true;
             }
-
-            return new Values(
-                methodName,
-                controllerName,
-                routeValues);
+            catch
+            {
+                _logger.ValuesNotExtracted(action);
+                return false;
+            }
         }
 
-        private static MethodCallExpression ExtractMethodCall(
-            LambdaExpression action)
+        private bool TryExtractMethodCall(
+            LambdaExpression action,
+            out MethodCallExpression methodCall)
         {
-            var methodCall = action.Body as MethodCallExpression;
+            methodCall = (action.Body as MethodCallExpression)!;
 
             if (methodCall == null
                 && action.Body is UnaryExpression objectCast)
             {
-                methodCall = objectCast.Operand as MethodCallExpression;
+                methodCall = (objectCast.Operand as MethodCallExpression)!;
             }
 
             if (methodCall == null)
             {
-                throw new InvalidOperationException("Expression's body must " +
-                    $"be a {nameof(MethodCallExpression)}.");
+                _logger.MethodCallNotExtracted(action.Body);
+                return false;
             }
 
-            return methodCall;
+            _logger.MethodCallExtracted();
+            return true;
         }
 
-        private static MethodInfo ExtractMethod(
-            MethodCallExpression methodCall)
+        private bool TryExtractMethod(
+            MethodCallExpression methodCall,
+            out MethodInfo method)
         {
-            var method = methodCall.Method;
+            method = methodCall.Method;
 
             if (method == null)
             {
-                throw new InvalidOperationException("Expression must point " +
-                    "to the method which isn't null.");
+                _logger.MethodNotExtracted(methodCall);
+                return false;
             }
 
-            return method;
+            _logger.MethodExtracted();
+            return true;
         }
 
-        private static Type ExtractController<TController>()
+        private bool TryExtractController<TController>(out Type controller)
             where TController : ControllerBase
         {
-            var controller = typeof(TController);
+            controller = typeof(TController);
 
             if (controller == null)
             {
-                throw new InvalidOperationException($"Type of " +
-                    $"{nameof(TController)} cannot be null.");
+                _logger.ControllerNotExtracted();
+                return false;
             }
 
-            return controller;
+            _logger.ControllerExtracted();
+            return true;
         }
 
-        private static void ValidateMethodPolymorphism(
+        private bool ValidateMethodPolymorphism(
             MethodInfo method,
             Type controller)
         {
-            if (controller.IsInterface
-                || controller.IsAbstract)
+            if (controller.IsAbstract)
             {
-                throw new InvalidOperationException("TController cannot be " +
-                    "abstract.");
+                _logger.AbstractController();
+                return false;
             }
 
             if (method.DeclaringType != controller)
             {
-                throw new InvalidOperationException("Expression must point " +
-                    "to the method with the same declaring type as " +
-                    "TController.");
+                _logger.OverridenMethod();
+                return false;
             }
+
+            return true;
         }
 
-        private static void ValidateEnpointName(
+        private bool ValidateEnpointName(
             string? endpointName,
             MethodInfo method)
         {
@@ -183,23 +247,25 @@ namespace UriGeneration.Internal
 
                 if (!endpointNameDefined)
                 {
-                    throw new InvalidOperationException("Expression must " +
-                        $"point to the method which has {endpointName} " +
-                        "endpoint name specified.");
+                    _logger.EndpointNameNotFound(endpointName);
+                    return false;
                 }
             }
+
+            return true;
         }
 
-        private static string ExtractMethodName(MethodInfo method)
+        private bool TryExtractMethodName(
+            MethodInfo method,
+            out string methodName)
         {
+            methodName = method.Name;
+
             if (method.IsDefined(typeof(NonActionAttribute), inherit: true))
             {
-                throw new InvalidOperationException("Expression must point " +
-                    "to the method which doesn't have " +
-                    $"{nameof(NonActionAttribute)} specified.");
+                _logger.MethodNameNonActionAttribute(method.Name);
+                return false;
             }
-
-            string methodName = method.Name;
 
             if (methodName.EndsWith(AsyncSuffix))
             {
@@ -213,23 +279,26 @@ namespace UriGeneration.Internal
 
             if (actionNameAttribute != null)
             {
-                return actionNameAttribute.Name;
+                methodName = actionNameAttribute.Name;
             }
 
-            return methodName;
+            _logger.MethodNameExtracted(methodName);
+            return true;
         }
 
-        private static string ExtractControllerName(Type controller)
+        private bool TryExtractControllerName(
+            Type controller,
+            out string controllerName)
         {
+            controllerName = controller.Name;
+
             if (controller.IsDefined(
                     typeof(NonControllerAttribute),
                     inherit: true))
             {
-                throw new InvalidOperationException("TController cannot have " +
-                    $"{nameof(NonControllerAttribute)} specified.");
+                _logger.ControllerNameNonControllerAttribute();
+                return false;
             }
-
-            string controllerName = controller.Name;
 
             if (controllerName.EndsWith(ControllerSuffix))
             {
@@ -237,10 +306,11 @@ namespace UriGeneration.Internal
                 controllerName = controllerName.Remove(index);
             }
 
-            return controllerName;
+            _logger.ControllerNameExtracted(controllerName);
+            return true;
         }
 
-        private static string? ExtractControllerAreaName(Type controller)
+        private string? ExtractControllerAreaName(Type controller)
         {
             var areaAttribute = controller
                 .GetCustomAttributes<AreaAttribute>(inherit: true)
@@ -254,7 +324,7 @@ namespace UriGeneration.Internal
             return null;
         }
 
-        private static RouteValueDictionary ExtractRouteValues(
+        private RouteValueDictionary ExtractRouteValues(
             ParameterInfo[] methodParameters,
             ReadOnlyCollection<Expression> methodCallArguments,
             string? controllerAreaName,
@@ -277,6 +347,7 @@ namespace UriGeneration.Internal
                 }
 
                 routeValues.Add(methodParameters[i].Name, value);
+                _logger.RouteValueExtracted(methodParameters[i].Name, value);
             }
 
             if (controllerAreaName != null)
@@ -284,14 +355,16 @@ namespace UriGeneration.Internal
                 routeValues.Add(AreaKey, controllerAreaName);
             }
 
+
+            _logger.RouteValuesExtracted();
             return routeValues;
         }
 
-        private static object EvaluateExpression(
+        private object EvaluateExpression(
             Expression expression,
             UriOptions options)
         {
-            if (!options.BypassCachedExpressionCompiler)
+            if (!options.BypassCachedExpressionCompiler!.Value)
             {
                 return CachedExpressionCompiler.Evaluate(expression);
             }
@@ -301,14 +374,12 @@ namespace UriGeneration.Internal
                 var unusedParameterExpr = Expression.Parameter(
                     typeof(object),
                     "_unused");
-
                 Expression<Func<object, object>> lambdaExpr =
                     Expression.Lambda<Func<object, object>>(
                         Expression.Convert(expression, typeof(object)),
                         unusedParameterExpr);
 
                 var func = lambdaExpr.Compile();
-
                 return func(null);
             }
         }

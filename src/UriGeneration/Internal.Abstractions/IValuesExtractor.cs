@@ -5,6 +5,6 @@ namespace UriGeneration.Internal.Abstractions
 {
     internal interface IValuesExtractor
     {
-        Values ExtractValues<TController>(LambdaExpression action, string? endpointName = null, UriOptions? options = null) where TController : ControllerBase;
+        bool TryExtractValues<TController>(LambdaExpression action, out Values values, string? endpointName = null, UriOptions? options = null) where TController : ControllerBase;
     }
 }

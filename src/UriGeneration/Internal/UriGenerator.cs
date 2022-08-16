@@ -29,7 +29,7 @@ namespace UriGeneration.Internal
             _valuesExtractor = valuesExtractor;
         }
 
-        public string GetPathByExpression<TController>(
+        public string? GetPathByExpression<TController>(
            HttpContext httpContext,
            Expression<Action<TController>> action,
            string? endpointName = null,
@@ -57,7 +57,7 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        public string GetPathByExpression<TController>(
+        public string? GetPathByExpression<TController>(
             HttpContext httpContext,
             Expression<Func<TController, object?>> action,
             string? endpointName = null,
@@ -85,7 +85,7 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        public string GetUriByExpression<TController>(
+        public string? GetUriByExpression<TController>(
             HttpContext httpContext,
             Expression<Action<TController>> action,
             string? endpointName = null,
@@ -117,7 +117,7 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        public string GetUriByExpression<TController>(
+        public string? GetUriByExpression<TController>(
             HttpContext httpContext,
             Expression<Func<TController, object?>> action,
             string? endpointName = null,
@@ -149,7 +149,7 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        private string GetPathByExpressionCore<TController>(
+        private string? GetPathByExpressionCore<TController>(
             HttpContext httpContext,
             LambdaExpression action,
             string? endpointName = null,
@@ -168,16 +168,18 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var values = _valuesExtractor.ExtractValues<TController>(
+            if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
+                out var values,
                 endpointName,
-                options);
-
-            string? path;
+                options))
+            {
+                return default;
+            }
 
             if (endpointName != null)
             {
-                path = _linkGenerator.GetPathByName(
+                return _linkGenerator.GetPathByName(
                     httpContext: httpContext,
                     endpointName: endpointName,
                     values: values.RouteValues,
@@ -187,7 +189,7 @@ namespace UriGeneration.Internal
             }
             else
             {
-                path = _linkGenerator.GetPathByAction(
+                return _linkGenerator.GetPathByAction(
                     httpContext: httpContext,
                     action: values.ActionName,
                     controller: values.ControllerName,
@@ -196,17 +198,9 @@ namespace UriGeneration.Internal
                     fragment: fragment,
                     options: options);
             }
-
-            if (path == null)
-            {
-                throw new InvalidOperationException("An URI could not be " +
-                    "created.");
-            }
-
-            return path;
         }
 
-        private string GetUriByExpressionCore<TController>(
+        private string? GetUriByExpressionCore<TController>(
             HttpContext httpContext,
             LambdaExpression action,
             string? endpointName = null,
@@ -227,16 +221,18 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var values = _valuesExtractor.ExtractValues<TController>(
+            if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
+                out var values,
                 endpointName,
-                options);
-
-            string? uri;
+                options))
+            {
+                return default;
+            }
 
             if (endpointName != null)
             {
-                uri = _linkGenerator.GetUriByName(
+                return _linkGenerator.GetUriByName(
                     httpContext: httpContext,
                     endpointName: endpointName,
                     values: values.RouteValues,
@@ -248,25 +244,17 @@ namespace UriGeneration.Internal
             }
             else
             {
-                uri = _linkGenerator.GetUriByAction(
-                    httpContext: httpContext,
-                    action: values.ActionName,
-                    controller: values.ControllerName,
-                    values: values.RouteValues,
-                    scheme: scheme,
-                    host: host,
-                    pathBase: pathBase,
-                    fragment: fragment,
-                    options: options);
+                return _linkGenerator.GetUriByAction(
+                     httpContext: httpContext,
+                     action: values.ActionName,
+                     controller: values.ControllerName,
+                     values: values.RouteValues,
+                     scheme: scheme,
+                     host: host,
+                     pathBase: pathBase,
+                     fragment: fragment,
+                     options: options);
             }
-
-            if (uri == null)
-            {
-                throw new InvalidOperationException("An URI could not be " +
-                    "created.");
-            }
-
-            return uri;
         }
     }
 }
