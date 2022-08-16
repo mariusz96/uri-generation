@@ -25,6 +25,7 @@ namespace UriGeneration.Internal
 
         [LoggerMessage(1007, LogLevel.Debug, "Succesfully retrieved valid entry for a given cache key.", EventName = nameof(ValidCacheEntryRetrieved))]
         public static partial void ValidCacheEntryRetrieved(this ILogger logger);
+
         [LoggerMessage(1008, LogLevel.Debug, "Succesfully retrieved invalid entry for a given cache key.", EventName = nameof(InvalidCacheEntryRetrieved))]
         public static partial void InvalidCacheEntryRetrieved(this ILogger logger);
 
