@@ -66,31 +66,29 @@ namespace UriGeneration.Internal
 
                 var key = (method, controller, endpointName);
 
-                if (options?.BypassMethodCache is not true)
+                if (options?.BypassMethodCache is not true
+                    && _methodCache.TryGetValue(key, out MethodCacheEntry entry))
                 {
-                    if (_methodCache.TryGetValue(key, out MethodCacheEntry entry))
+                    if (entry.IsValid)
                     {
-                        if (entry.IsValid)
-                        {
-                            _logger.ValidCacheEntryRetrieved();
+                        _logger.ValidCacheEntryRetrieved();
 
-                            var entryRouteValues = ExtractRouteValues(
-                                entry.MethodParameters,
-                                methodCall.Arguments,
-                                entry.ControllerAreaName,
-                                options);
+                        var entryRouteValues = ExtractRouteValues(
+                            entry.MethodParameters,
+                            methodCall.Arguments,
+                            entry.ControllerAreaName,
+                            options);
 
-                            values = new Values(
-                                entry.MethodName,
-                                entry.ControllerName,
-                                entryRouteValues);
-                            return true;
-                        }
-                        else
-                        {
-                            _logger.InvalidCacheEntryRetrieved();
-                            return false;
-                        }
+                        values = new Values(
+                            entry.MethodName,
+                            entry.ControllerName,
+                            entryRouteValues);
+                        return true;
+                    }
+                    else
+                    {
+                        _logger.InvalidCacheEntryRetrieved();
+                        return false;
                     }
                 }
 
