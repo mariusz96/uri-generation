@@ -55,7 +55,7 @@ namespace UriGeneration.Internal
         [LoggerMessage(1017, LogLevel.Debug, "Succesfully extracted all values from expression.", EventName = nameof(ValuesExtracted))]
         public static partial void ValuesExtracted(this ILogger logger);
 
-        [LoggerMessage(1018, LogLevel.Debug, "Failed to extract any values from expression {Expression}: an exception occured {Exception}.", EventName = nameof(ValuesException))]
+        [LoggerMessage(1018, LogLevel.Debug, "Failed to extract any values from expression {Expression}: an exception occured.", EventName = nameof(ValuesException))]
         public static partial void ValuesException(this ILogger logger, LambdaExpression expression, Exception exception);
     }
 }
