@@ -81,39 +81,23 @@ namespace UriGeneration.Internal
                     var key = (method, controller, endpointName);
                     if (_methodCache.TryGetValue(key, out MethodCacheEntry entry))
                     {
-                        if (entry.IsValid)
-                        {
-                            var entryRouteValues = ExtractRouteValues(
-                                entry.MethodParameters,
-                                methodCall.Arguments,
-                                entry.ControllerAreaName,
-                                options);
+                        var entryRouteValues = ExtractRouteValues(
+                            entry.MethodParameters,
+                            methodCall.Arguments,
+                            entry.ControllerAreaName,
+                            options);
 
-                            values = new Values(
-                                entry.MethodName,
-                                entry.ControllerName,
-                                entryRouteValues);
-                            return true;
-                        }
-                        else
-                        {
-                            return false;
-                        }
+                        values = new Values(
+                            entry.MethodName,
+                            entry.ControllerName,
+                            entryRouteValues);
+                        return true;
                     }
                 }
 
                 if (!ValidateMethodPolymorphism(method, controller)
                     || !ValidateEnpointName(endpointName, method))
                 {
-                    if (!options.BypassMethodCache!.Value)
-                    {
-                        var key = (method, controller, endpointName);
-                        _methodCache.Set(
-                            key,
-                            new MethodCacheEntry(),
-                            CacheEntryOptions);
-                    }
-
                     return false;
                 }
 
