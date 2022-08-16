@@ -20,12 +20,6 @@ namespace UriGeneration.Internal
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
 
-        private static readonly UriOptions DefaultOptions = new()
-        {
-            BypassMethodCache = false,
-            BypassCachedExpressionCompiler = false
-        };
-
         private readonly IMemoryCache _methodCache;
         private readonly ILogger<ValuesExtractor> _logger;
 
@@ -63,12 +57,6 @@ namespace UriGeneration.Internal
 
             try
             {
-                options ??= DefaultOptions;
-
-                options.BypassMethodCache ??= DefaultOptions.BypassMethodCache;
-                options.BypassCachedExpressionCompiler ??=
-                    DefaultOptions.BypassCachedExpressionCompiler;
-
                 if (!TryExtractMethodCall(action, out var methodCall)
                     || !TryExtractMethod(methodCall, out var method)
                     || !TryExtractController<TController>(out var controller))
@@ -76,22 +64,30 @@ namespace UriGeneration.Internal
                     return false;
                 }
 
-                if (!options.BypassMethodCache!.Value)
+                var key = (method, controller, endpointName);
+
+                if (options?.BypassMethodCache is not true)
                 {
-                    var key = (method, controller, endpointName);
                     if (_methodCache.TryGetValue(key, out MethodCacheEntry entry))
                     {
-                        var entryRouteValues = ExtractRouteValues(
-                            entry.MethodParameters,
-                            methodCall.Arguments,
-                            entry.ControllerAreaName,
-                            options);
+                        if (entry.IsValid)
+                        {
+                            var entryRouteValues = ExtractRouteValues(
+                                entry.MethodParameters,
+                                methodCall.Arguments,
+                                entry.ControllerAreaName,
+                                options);
 
-                        values = new Values(
-                            entry.MethodName,
-                            entry.ControllerName,
-                            entryRouteValues);
-                        return true;
+                            values = new Values(
+                                entry.MethodName,
+                                entry.ControllerName,
+                                entryRouteValues);
+                            return true;
+                        }
+                        else
+                        {
+                            return false;
+                        }
                     }
                 }
 
@@ -106,6 +102,12 @@ namespace UriGeneration.Internal
                 if (!TryExtractMethodName(method, out var methodName)
                     || !TryExtractControllerName(controller, out var controllerName))
                 {
+                    if (options?.BypassMethodCache is not true)
+                    {
+                        var invalidEntry = MethodCacheEntry.Invalid();
+                        _methodCache.Set(key, invalidEntry, CacheEntryOptions);
+                    }
+
                     return false;
                 }
 
@@ -118,23 +120,21 @@ namespace UriGeneration.Internal
                     controllerAreaName,
                     options);
 
-                if (!options.BypassMethodCache!.Value)
+                if (options?.BypassMethodCache is not true)
                 {
-                    var key = (method, controller, endpointName);
-                    var validEntry = new MethodCacheEntry(
+                    var validEntry = MethodCacheEntry.Valid(
                         methodName,
                         controllerName,
                         methodParameters,
                         controllerAreaName);
-
                     _methodCache.Set(key, validEntry, CacheEntryOptions);
                 }
 
+                _logger.ValuesExtracted();
                 values = new Values(
                     methodName,
                     controllerName,
                     routeValues);
-                _logger.ValuesExtracted();
                 return true;
             }
             catch
@@ -294,7 +294,7 @@ namespace UriGeneration.Internal
             return true;
         }
 
-        private string? ExtractControllerAreaName(Type controller)
+        private static string? ExtractControllerAreaName(Type controller)
         {
             var areaAttribute = controller
                 .GetCustomAttributes<AreaAttribute>(inherit: true)
@@ -312,9 +312,9 @@ namespace UriGeneration.Internal
             ParameterInfo[] methodParameters,
             ReadOnlyCollection<Expression> methodCallArguments,
             string? controllerAreaName,
-            UriOptions options)
+            UriOptions? options)
         {
-            var routeValues = new RouteValueDictionary { };
+            var routeValues = new RouteValueDictionary();
 
             for (int i = 0; i < methodParameters.Length; i++)
             {
@@ -342,11 +342,11 @@ namespace UriGeneration.Internal
             return routeValues;
         }
 
-        private object EvaluateExpression(
+        private static object EvaluateExpression(
             Expression expression,
-            UriOptions options)
+            UriOptions? options)
         {
-            if (!options.BypassCachedExpressionCompiler!.Value)
+            if (options?.BypassCachedExpressionCompiler is not true)
             {
                 return CachedExpressionCompiler.Evaluate(expression);
             }
@@ -362,7 +362,7 @@ namespace UriGeneration.Internal
                         unusedParameterExpr);
 
                 var func = lambdaExpr.Compile();
-                return func(null);
+                return func(null!);
             }
         }
     }
