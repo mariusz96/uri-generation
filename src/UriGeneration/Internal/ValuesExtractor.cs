@@ -72,6 +72,8 @@ namespace UriGeneration.Internal
                     {
                         if (entry.IsValid)
                         {
+                            _logger.ValidCacheEntryRetrieved();
+
                             var entryRouteValues = ExtractRouteValues(
                                 entry.MethodParameters,
                                 methodCall.Arguments,
@@ -86,6 +88,7 @@ namespace UriGeneration.Internal
                         }
                         else
                         {
+                            _logger.InvalidCacheEntryRetrieved();
                             return false;
                         }
                     }
@@ -137,9 +140,9 @@ namespace UriGeneration.Internal
                     routeValues);
                 return true;
             }
-            catch
+            catch (Exception exception)
             {
-                _logger.ValuesException(action);
+                _logger.ValuesException(action, exception);
                 return false;
             }
         }
