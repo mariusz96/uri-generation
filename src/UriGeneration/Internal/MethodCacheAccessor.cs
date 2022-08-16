@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace UriGeneration.Internal
 {
-    internal class MethodCacheAccessor : IMethodCacheAccessor
+    internal class MethodCacheAccessor : IMethodCacheAccessor, IDisposable
     {
         public IMemoryCache Cache { get; }
 
@@ -23,5 +23,7 @@ namespace UriGeneration.Internal
                 CompactionPercentage = options.CompactionPercentage
             });
         }
+
+        public void Dispose() => Cache?.Dispose();
     }
 }
