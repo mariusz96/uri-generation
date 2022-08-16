@@ -139,7 +139,7 @@ namespace UriGeneration.Internal
             }
             catch
             {
-                _logger.ValuesNotExtracted(action);
+                _logger.ValuesException(action);
                 return false;
             }
         }

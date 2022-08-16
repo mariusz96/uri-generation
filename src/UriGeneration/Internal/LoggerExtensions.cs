@@ -47,10 +47,10 @@ namespace UriGeneration.Internal
         [LoggerMessage(14, LogLevel.Debug, "Succesfully extracted route value: {Key}, {Value}.", EventName = nameof(RouteValueExtracted))]
         public static partial void RouteValueExtracted(this ILogger logger, string? key, object? value);
 
-        [LoggerMessage(15, LogLevel.Debug, "Succesfully extracted values from expression.", EventName = nameof(ValuesExtracted))]
+        [LoggerMessage(15, LogLevel.Debug, "Succesfully extracted all values from expression.", EventName = nameof(ValuesExtracted))]
         public static partial void ValuesExtracted(this ILogger logger);
 
-        [LoggerMessage(16, LogLevel.Debug, "Failed to extract values from expression: {Expression}.", EventName = nameof(ValuesNotExtracted))]
-        public static partial void ValuesNotExtracted(this ILogger logger, LambdaExpression expression);
+        [LoggerMessage(16, LogLevel.Debug, "Failed to extract any values from expression: {Expression}, an exception occured.", EventName = nameof(ValuesException))]
+        public static partial void ValuesException(this ILogger logger, LambdaExpression expression);
     }
 }
