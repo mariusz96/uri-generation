@@ -23,10 +23,10 @@ namespace UriGeneration.Internal
         [LoggerMessage(1006, LogLevel.Debug, "Failed to extract Type of TController: typeof(TController) cannot be null.", EventName = nameof(ControllerNotExtracted))]
         public static partial void ControllerNotExtracted(this ILogger logger);
 
-        [LoggerMessage(1007, LogLevel.Debug, "Succesfully retrieved valid entry for a given cache key.", EventName = nameof(ValidCacheEntryRetrieved))]
-        public static partial void ValidCacheEntryRetrieved(this ILogger logger);
+        [LoggerMessage(1007, LogLevel.Debug, "Succesfully retrieved valid cache entry with values: {MethodName}, {ControllerName} and {AreaKey}, {ControllerAreaName} (if present).", EventName = nameof(ValidCacheEntryRetrieved))]
+        public static partial void ValidCacheEntryRetrieved(this ILogger logger, string methodName, string controllerName, string areaKey, string? controllerAreaName);
 
-        [LoggerMessage(1008, LogLevel.Debug, "Succesfully retrieved invalid entry for a given cache key.", EventName = nameof(InvalidCacheEntryRetrieved))]
+        [LoggerMessage(1008, LogLevel.Debug, "Succesfully retrieved invalid cache entry.", EventName = nameof(InvalidCacheEntryRetrieved))]
         public static partial void InvalidCacheEntryRetrieved(this ILogger logger);
 
         [LoggerMessage(1009, LogLevel.Debug, "TController cannot be abstract.", EventName = nameof(AbstractController))]

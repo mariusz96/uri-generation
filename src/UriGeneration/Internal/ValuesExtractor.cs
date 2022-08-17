@@ -73,7 +73,11 @@ namespace UriGeneration.Internal
                 {
                     if (entry.IsValid)
                     {
-                        _logger.ValidCacheEntryRetrieved();
+                        _logger.ValidCacheEntryRetrieved(
+                            entry.MethodName,
+                            entry.ControllerName,
+                            AreaKey,
+                            entry.ControllerAreaName);
 
                         var entryRouteValues = ExtractRouteValues(
                             entry.MethodParameters,
