@@ -77,5 +77,8 @@ public class InvoicesController
 }
 ```
 
+## Debugging:
+To see the default log messages, enable LogLevel.Debug in the logging configuration.
+
 ## Credits:
 - LinkBuilder and CachedExpressionCompiler by https://github.com/aspnet/AspNetWebStack (Apache-2.0 license)
