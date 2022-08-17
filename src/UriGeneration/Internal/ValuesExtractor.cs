@@ -57,7 +57,7 @@ namespace UriGeneration.Internal
 
             try
             {
-                if (!TryExtractMethodCall(action, out var methodCall)
+                if (!TryExtractMethodCall(action.Body, out var methodCall)
                     || !TryExtractMethod(methodCall, out var method)
                     || !TryExtractController<TController>(out var controller))
                 {
@@ -147,20 +147,20 @@ namespace UriGeneration.Internal
         }
 
         private bool TryExtractMethodCall(
-            LambdaExpression action,
+            Expression actionBody,
             out MethodCallExpression methodCall)
         {
-            methodCall = (action.Body as MethodCallExpression)!;
+            methodCall = (actionBody as MethodCallExpression)!;
 
             if (methodCall == null
-                && action.Body is UnaryExpression objectCast)
+                && actionBody is UnaryExpression objectCast)
             {
                 methodCall = (objectCast.Operand as MethodCallExpression)!;
             }
 
             if (methodCall == null)
             {
-                _logger.MethodCallNotExtracted(action.Body);
+                _logger.MethodCallNotExtracted(actionBody);
                 return false;
             }
 
@@ -249,7 +249,7 @@ namespace UriGeneration.Internal
 
             if (method.IsDefined(typeof(NonActionAttribute), inherit: true))
             {
-                _logger.MethodNameNonActionAttribute(method.Name);
+                _logger.MethodNameNonActionAttribute(methodName);
                 return false;
             }
 
@@ -324,8 +324,13 @@ namespace UriGeneration.Internal
                     value = EvaluateExpression(methodCallArgument, options);
                 }
 
-                routeValues.Add(methodParameters[i].Name, value);
-                _logger.RouteValueExtracted(methodParameters[i].Name, value);
+                string? methodParameterName = methodParameters[i].Name;
+
+                if (methodParameterName != null)
+                {
+                    routeValues.Add(methodParameterName, value);
+                    _logger.RouteValueExtracted(methodParameterName, value);
+                }
             }
 
             if (controllerAreaName != null)
