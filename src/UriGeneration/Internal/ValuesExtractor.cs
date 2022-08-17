@@ -290,7 +290,7 @@ namespace UriGeneration.Internal
             return true;
         }
 
-        private static string? ExtractControllerAreaName(Type controller)
+        private string? ExtractControllerAreaName(Type controller)
         {
             var areaAttribute = controller
                 .GetCustomAttributes<AreaAttribute>(inherit: true)
@@ -298,10 +298,12 @@ namespace UriGeneration.Internal
 
             if (areaAttribute != null)
             {
-                return areaAttribute.RouteValue;
+                string controllerAreaName = areaAttribute.RouteValue;
+                _logger.RouteValueExtracted(AreaKey, controllerAreaName);
+                return controllerAreaName;
             }
 
-            return null;
+            return default;
         }
 
         private RouteValueDictionary ExtractRouteValues(
@@ -338,7 +340,6 @@ namespace UriGeneration.Internal
             if (controllerAreaName != null)
             {
                 routeValues.Add(AreaKey, controllerAreaName);
-                _logger.RouteValueExtracted(AreaKey, controllerAreaName);
             }
 
             return routeValues;
