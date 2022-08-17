@@ -253,11 +253,7 @@ namespace UriGeneration.Internal
                 return false;
             }
 
-            if (methodName.EndsWith(AsyncSuffix))
-            {
-                int index = methodName.LastIndexOf(AsyncSuffix);
-                methodName = methodName.Remove(index);
-            }
+            methodName = methodName.RemoveSuffix(AsyncSuffix);
 
             var actionNameAttribute = method
                 .GetCustomAttributes<ActionNameAttribute>(inherit: true)
@@ -286,11 +282,7 @@ namespace UriGeneration.Internal
                 return false;
             }
 
-            if (controllerName.EndsWith(ControllerSuffix))
-            {
-                int index = controllerName.LastIndexOf(ControllerSuffix);
-                controllerName = controllerName.Remove(index);
-            }
+            controllerName = controllerName.RemoveSuffix(ControllerSuffix);
 
             _logger.ControllerNameExtracted(controllerName);
             return true;
