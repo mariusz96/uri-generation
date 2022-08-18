@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/mariusz96/uri-generation</RepositoryUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageId>UriGeneration</PackageId>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <Copyright>Mariusz Stępień</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
