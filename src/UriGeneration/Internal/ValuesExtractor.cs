@@ -336,7 +336,7 @@ namespace UriGeneration.Internal
 
                 if (methodParameters[i].Name != null)
                 {
-                    routeValues.Add(methodParameters[i].Name, value);
+                    routeValues.Add(methodParameters[i].Name!, value);
                     _logger.RouteValueExtracted(methodParameters[i].Name, value);
                 }
             }
