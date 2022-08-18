@@ -23,7 +23,7 @@ namespace UriGeneration.Internal
         private static readonly ParameterExpression UnusedParameterExpr =
             Expression.Parameter(typeof(object), "_unused");
 
-        private readonly IMemoryCache _methodCache;
+        private readonly IMethodCacheAccessor _methodCacheAccessor;
         private readonly ILogger<ValuesExtractor> _logger;
 
         public ValuesExtractor(
@@ -40,7 +40,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(logger));
             }
 
-            _methodCache = methodCacheAccessor.Cache;
+            _methodCacheAccessor = methodCacheAccessor;
             _logger = logger;
         }
 
@@ -67,10 +67,12 @@ namespace UriGeneration.Internal
                     return false;
                 }
 
+                var methodCache = _methodCacheAccessor.Cache;
+
                 var key = (method, controller, endpointName);
 
                 if (options?.BypassMethodCache is not true
-                    && _methodCache.TryGetValue(key, out MethodCacheEntry entry))
+                    && methodCache.TryGetValue(key, out MethodCacheEntry entry))
                 {
                     if (entry.IsValid)
                     {
@@ -105,7 +107,7 @@ namespace UriGeneration.Internal
                     if (options?.BypassMethodCache is not true)
                     {
                         var invalidEntry = MethodCacheEntry.Invalid();
-                        _methodCache.Set(key, invalidEntry, CacheEntryOptions);
+                        methodCache.Set(key, invalidEntry, CacheEntryOptions);
                     }
 
                     return false;
@@ -135,7 +137,7 @@ namespace UriGeneration.Internal
                         controllerName,
                         methodParameters,
                         controllerAreaName);
-                    _methodCache.Set(key, validEntry, CacheEntryOptions);
+                    methodCache.Set(key, validEntry, CacheEntryOptions);
                 }
 
                 _logger.ValuesExtracted();
