@@ -147,7 +147,7 @@ namespace UriGeneration.Internal
             }
             catch (Exception exception)
             {
-                _logger.ValuesException(action, exception);
+                _logger.ValuesNotExtracted(action, exception);
                 return false;
             }
         }
@@ -166,7 +166,7 @@ namespace UriGeneration.Internal
 
             if (methodCall == null)
             {
-                _logger.MethodCallNotExtracted(actionBody);
+                _logger.MethodCallNotExtractedCast(actionBody);
                 return false;
             }
 
@@ -182,7 +182,7 @@ namespace UriGeneration.Internal
 
             if (method == null)
             {
-                _logger.MethodNotExtracted(methodCall);
+                _logger.MethodNotExtractedNull(methodCall);
                 return false;
             }
 
@@ -197,7 +197,7 @@ namespace UriGeneration.Internal
 
             if (controller == null)
             {
-                _logger.ControllerNotExtracted();
+                _logger.ControllerNotExtractedNull();
                 return false;
             }
 
@@ -255,7 +255,7 @@ namespace UriGeneration.Internal
 
             if (method.IsDefined(typeof(NonActionAttribute), inherit: true))
             {
-                _logger.MethodNameNonActionAttribute(methodName);
+                _logger.MethodNameNotExtractedNonAction(methodName);
                 return false;
             }
 
@@ -284,7 +284,7 @@ namespace UriGeneration.Internal
                     typeof(NonControllerAttribute),
                     inherit: true))
             {
-                _logger.ControllerNameNonControllerAttribute();
+                _logger.ControllerNameNotExtractedNonController(controllerName);
                 return false;
             }
 
