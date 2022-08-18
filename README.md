@@ -1,5 +1,5 @@
 # Uri Generation
-Strongly typed, cached URL building for ASP.NET Core using lambda expressions:
+Strongly typed, cached URL generation for ASP.NET Core using lambda expressions:
 ```C#
 _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
@@ -21,7 +21,7 @@ If multiple URL paths match an action in your controller:
 [HttpGet("invoices/{id}", Name = "GetInvoice")]
 public InvoiceResource GetInvoice(int id)
 ```
-you can specify an endpoint name to build an endpoint-specific URL:
+you can specify an endpoint name to generate an endpoint-specific URL:
 ```C#
 _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
@@ -34,7 +34,7 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
     c => c.GetInvoice(2),
     "GetInvoice");
 ```
-UriGenerator will validate whether such endpoint name is defined in action's HttpMethod, AcceptVerbs, or Route attribute and build URL based on it and expression's route values.
+UriGenerator will validate whether such endpoint name is defined in action's HttpMethod, AcceptVerbs, or Route attribute and generate URL based on it and expression's route values.
 
 To further improve on this, you can use classes such as Microsoft.Azure.Management.ResourceManager.Fluent.Core.ExpandableStringEnum instead of strings to define your endpoint names. That would require you to write a simple adapter class that takes a string from your class and passes it to UriGenerator.
 
@@ -43,7 +43,7 @@ Extracting values from expression trees does introduce some overhead. To work ar
 
 Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted controller names, action names, and route values' keys within the scope of the application lifetime.
 
-This means that, for example, on 2017 Surface Book 2 you are able to build 100000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
+This means that, for example, on 2017 Surface Book 2 you are able to generate 100000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
 
 ## Setup:
 - Install UriGeneration via NuGet Package Manager, Package Manager Console or dotnet CLI:
