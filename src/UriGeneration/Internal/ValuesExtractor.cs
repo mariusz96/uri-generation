@@ -100,7 +100,7 @@ namespace UriGeneration.Internal
                     }
                 }
 
-                if (!ValidateMethodPolymorphism(method, controller)
+                if (!ValidateMethodConcreteness(method, controller)
                     || !ValidateEnpointName(endpointName, method))
                 {
                     if (options?.BypassMethodCache is not true)
@@ -207,7 +207,7 @@ namespace UriGeneration.Internal
             return true;
         }
 
-        private bool ValidateMethodPolymorphism(
+        private bool ValidateMethodConcreteness(
             MethodInfo method,
             Type controller)
         {
@@ -219,7 +219,7 @@ namespace UriGeneration.Internal
 
             if (method.DeclaringType != controller)
             {
-                _logger.OverridenMethod();
+                _logger.MethodDeclaringType();
                 return false;
             }
 

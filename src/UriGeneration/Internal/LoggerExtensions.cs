@@ -32,8 +32,8 @@ namespace UriGeneration.Internal
         [LoggerMessage(1009, LogLevel.Debug, "TController cannot be abstract.", EventName = nameof(AbstractController))]
         public static partial void AbstractController(this ILogger logger);
         
-        [LoggerMessage(1010, LogLevel.Debug, "Expression must point to the method with the same declaring type as TController.", EventName = nameof(OverridenMethod))]
-        public static partial void OverridenMethod(this ILogger logger);
+        [LoggerMessage(1010, LogLevel.Debug, "Expression must point to the method with the same declaring type as TController.", EventName = nameof(MethodDeclaringType))]
+        public static partial void MethodDeclaringType(this ILogger logger);
         
         [LoggerMessage(1011, LogLevel.Debug, "Expression must point to the method which has {EndpointName} endpoint name specified.", EventName = nameof(EndpointNameNotFound))]
         public static partial void EndpointNameNotFound(this ILogger logger, string endpointName);
