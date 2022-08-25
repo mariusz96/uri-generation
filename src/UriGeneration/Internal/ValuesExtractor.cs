@@ -20,7 +20,6 @@ namespace UriGeneration.Internal
 
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
-
         private static readonly ParameterExpression UnusedParameterExpr =
             Expression.Parameter(typeof(object), "_unused");
 
@@ -257,7 +256,6 @@ namespace UriGeneration.Internal
             MethodInfo method)
         {
             var includedMethodParameters = new List<ParameterInfo>();
-
             var methodParameters = method.GetParameters();
 
             foreach (var methodParameter in methodParameters)
@@ -318,7 +316,6 @@ namespace UriGeneration.Internal
 
             return true;
         }
-
 
         private bool TryExtractMethodName(
             MethodInfo method,
