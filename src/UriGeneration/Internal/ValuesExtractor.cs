@@ -88,6 +88,8 @@ namespace UriGeneration.Internal
                             entry.ControllerAreaName,
                             options);
 
+                        _logger.ValuesExtracted();
+
                         values = new Values(
                             entry.MethodName,
                             entry.ControllerName,
