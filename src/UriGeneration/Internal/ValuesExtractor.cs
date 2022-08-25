@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace UriGeneration.Internal
 {
@@ -82,7 +83,7 @@ namespace UriGeneration.Internal
                             entry.ControllerAreaName);
 
                         var entryRouteValues = ExtractRouteValues(
-                            entry.MethodParameters,
+                            entry.IncludedMethodParameters,
                             methodCall.Arguments,
                             entry.ControllerAreaName,
                             options);
@@ -112,7 +113,8 @@ namespace UriGeneration.Internal
                     return false;
                 }
 
-                var methodParameters = method.GetParameters();
+                var includedMethodParameters = ExtractIncludedMethodParameters(
+                    method);
 
                 if (!TryExtractMethodName(method, out var methodName)
                     || !TryExtractControllerName(controller, out var controllerName))
@@ -124,7 +126,7 @@ namespace UriGeneration.Internal
                     controller);
 
                 var routeValues = ExtractRouteValues(
-                    methodParameters,
+                    includedMethodParameters,
                     methodCall.Arguments,
                     controllerAreaName,
                     options);
@@ -134,7 +136,7 @@ namespace UriGeneration.Internal
                     var validEntry = MethodCacheEntry.Valid(
                         methodName,
                         controllerName,
-                        methodParameters,
+                        includedMethodParameters,
                         controllerAreaName);
                     methodCache.Set(key, validEntry, CacheEntryOptions);
                 }
@@ -249,6 +251,73 @@ namespace UriGeneration.Internal
             return true;
         }
 
+        private ParameterInfo[] ExtractIncludedMethodParameters(
+            MethodInfo method)
+        {
+            var includedMethodParameters = new List<ParameterInfo>();
+
+            var methodParameters = method.GetParameters();
+
+            foreach (var methodParameter in methodParameters)
+            {
+                if (IncludeMethodParameter(methodParameter, log: true))
+                {
+                    includedMethodParameters.Add(methodParameter);
+                }
+            }
+
+            return includedMethodParameters.ToArray();
+        }
+
+        private bool IncludeMethodParameter(
+            ParameterInfo methodParameter,
+            bool log)
+        {
+            if (methodParameter.Name == null)
+            {
+                if (log)
+                {
+                    _logger.MethodParameterExcludedName(
+                        methodParameter.Position);
+                }
+                return false;
+            }
+
+            var type = methodParameter.ParameterType;
+
+            if (type.IsAssignableTo(typeof(IFormFile))
+                || type.IsAssignableTo(typeof(IEnumerable<IFormFile>))
+                || type.IsAssignableTo(typeof(CancellationToken))
+                || type.IsAssignableTo(typeof(FormCollection)))
+            {
+                if (log)
+                {
+                    _logger.MethodParameterExcludedType(methodParameter.Name);
+                }
+                return false;
+            }
+
+            var isExcludedAttributeDefined = methodParameter
+                .GetCustomAttributes(inherit: true)
+                .Any(attr => attr is FromBodyAttribute
+                             || attr is FromFormAttribute
+                             || attr is FromHeaderAttribute
+                             || attr is FromServicesAttribute);
+
+            if (isExcludedAttributeDefined)
+            {
+                if (log)
+                {
+                    _logger.MethodParameterExcludedAttribute(
+                        methodParameter.Name);
+                }
+                return false;
+            }
+
+            return true;
+        }
+
+
         private bool TryExtractMethodName(
             MethodInfo method,
             out string methodName)
@@ -313,16 +382,21 @@ namespace UriGeneration.Internal
         }
 
         private RouteValueDictionary ExtractRouteValues(
-            ParameterInfo[] methodParameters,
+            ParameterInfo[] inclduedMethodParameters,
             ReadOnlyCollection<Expression> methodCallArguments,
             string? controllerAreaName,
             UriOptions? options)
         {
             var routeValues = new RouteValueDictionary();
 
-            for (int i = 0; i < methodParameters.Length; i++)
+            foreach (var inclduedMethodParameter in inclduedMethodParameters)
             {
-                var methodCallArgument = methodCallArguments[i];
+                // nullablity validated in IncludeMethodParameter
+                string key = inclduedMethodParameter.Name!;
+
+                var methodCallArgument = methodCallArguments[
+                    inclduedMethodParameter.Position];
+
                 object? value;
 
                 if (methodCallArgument is ConstantExpression ce)
@@ -334,11 +408,8 @@ namespace UriGeneration.Internal
                     value = EvaluateExpression(methodCallArgument, options);
                 }
 
-                if (methodParameters[i].Name != null)
-                {
-                    routeValues.Add(methodParameters[i].Name!, value);
-                    _logger.RouteValueExtracted(methodParameters[i].Name, value);
-                }
+                routeValues.Add(key, value);
+                _logger.RouteValueExtracted(key, value);
             }
 
             if (controllerAreaName != null)

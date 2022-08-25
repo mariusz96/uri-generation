@@ -38,25 +38,34 @@ namespace UriGeneration.Internal
         [LoggerMessage(1011, LogLevel.Debug, "Expression must point to the method which has {EndpointName} endpoint name specified.", EventName = nameof(EndpointNameNotFound))]
         public static partial void EndpointNameNotFound(this ILogger logger, string endpointName);
 
-        [LoggerMessage(1012, LogLevel.Debug, "Successfully extracted method's name: {MethodName}.", EventName = nameof(MethodNameExtracted))]
+        [LoggerMessage(1012, LogLevel.Debug, "Excluding method's parameter with position {MethodParameterPosition}: name cannot be null.", EventName = nameof(MethodParameterExcludedName))]
+        public static partial void MethodParameterExcludedName(this ILogger logger, int methodParameterPosition);
+
+        [LoggerMessage(1013, LogLevel.Debug, "Excluding method's parameter: {MethodParameterName} cannot be of Type IFormFile, IEnumerable<IFormFile>, CancellationToken or FormCollection.", EventName = nameof(MethodParameterExcludedType))]
+        public static partial void MethodParameterExcludedType(this ILogger logger, string? methodParameterName);
+
+        [LoggerMessage(1014, LogLevel.Debug, "Excluding method's parameter: {MethodParameterName} cannot have FromBody, FromForm, FromHeader or FromServices attribute specified.", EventName = nameof(MethodParameterExcludedAttribute))]
+        public static partial void MethodParameterExcludedAttribute(this ILogger logger, string? methodParameterName);
+
+        [LoggerMessage(1015, LogLevel.Debug, "Successfully extracted method's name: {MethodName}.", EventName = nameof(MethodNameExtracted))]
         public static partial void MethodNameExtracted(this ILogger logger, string methodName);
         
-        [LoggerMessage(1013, LogLevel.Debug, "{MethodName} cannot have NonActionAttribute specified.", EventName = nameof(MethodNameNotExtractedNonAction))]
+        [LoggerMessage(1016, LogLevel.Debug, "{MethodName} cannot have NonActionAttribute specified.", EventName = nameof(MethodNameNotExtractedNonAction))]
         public static partial void MethodNameNotExtractedNonAction(this ILogger logger, string methodName);
 
-        [LoggerMessage(1014, LogLevel.Debug, "Succesfuly extracted controller's name: {ControllerName}.", EventName = nameof(ControllerNameExtracted))]
+        [LoggerMessage(1017, LogLevel.Debug, "Succesfuly extracted controller's name: {ControllerName}.", EventName = nameof(ControllerNameExtracted))]
         public static partial void ControllerNameExtracted(this ILogger logger, string controllerName);
         
-        [LoggerMessage(1015, LogLevel.Debug, "{ControllerName} cannot have NonControllerAttribute specified.", EventName = nameof(ControllerNameNotExtractedNonController))]
+        [LoggerMessage(1018, LogLevel.Debug, "{ControllerName} cannot have NonControllerAttribute specified.", EventName = nameof(ControllerNameNotExtractedNonController))]
         public static partial void ControllerNameNotExtractedNonController(this ILogger logger, string controllerName);
 
-        [LoggerMessage(1016, LogLevel.Debug, "Successfully extracted route value: {Key}, {Value}.", EventName = nameof(RouteValueExtracted))]
+        [LoggerMessage(1019, LogLevel.Debug, "Successfully extracted route value: {Key}, {Value}.", EventName = nameof(RouteValueExtracted))]
         public static partial void RouteValueExtracted(this ILogger logger, string? key, object? value);
 
-        [LoggerMessage(1017, LogLevel.Debug, "Successfully extracted all values from expression.", EventName = nameof(ValuesExtracted))]
+        [LoggerMessage(1020, LogLevel.Debug, "Successfully extracted all values from expression.", EventName = nameof(ValuesExtracted))]
         public static partial void ValuesExtracted(this ILogger logger);
 
-        [LoggerMessage(1018, LogLevel.Debug, "Failed to extract one or more values from expression {Expression}: an exception occurred.", EventName = nameof(ValuesNotExtracted))]
+        [LoggerMessage(1021, LogLevel.Debug, "Failed to extract one or more values from expression {Expression}: an exception occurred.", EventName = nameof(ValuesNotExtracted))]
         public static partial void ValuesNotExtracted(this ILogger logger, LambdaExpression expression, Exception exception);
     }
 }

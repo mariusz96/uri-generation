@@ -11,38 +11,43 @@ namespace UriGeneration.Internal
         [MemberNotNull(
             nameof(MethodName),
             nameof(ControllerName),
-            nameof(MethodParameters))]
+            nameof(IncludedMethodParameters))]
         public bool IsValid { get; }
         public string? MethodName { get; }
         public string? ControllerName { get; }
-        public ParameterInfo[]? MethodParameters { get; }
+        public ParameterInfo[]? IncludedMethodParameters { get; }
         public string? ControllerAreaName { get; }
+
+        private MethodCacheEntry(bool isValid)
+        {
+            IsValid = isValid;
+        }
 
         private MethodCacheEntry(
             bool isValid,
-            string? methodName = default,
-            string? controllerName = default,
-            ParameterInfo[]? methodParameters = default,
-            string? controllerAreaName = default)
+            string methodName,
+            string controllerName,
+            ParameterInfo[] includedMethodParameters,
+            string? controllerAreaName = null)
         {
             IsValid = isValid;
             MethodName = methodName;
             ControllerName = controllerName;
-            MethodParameters = methodParameters;
+            IncludedMethodParameters = includedMethodParameters;
             ControllerAreaName = controllerAreaName;
         }
 
         public static MethodCacheEntry Valid(
             string methodName,
             string controllerName,
-            ParameterInfo[] methodParameters,
+            ParameterInfo[] includedMethodParameters,
             string? controllerAreaName = null)
         {
             return new(
                 isValid: true,
                 methodName,
                 controllerName,
-                methodParameters,
+                includedMethodParameters,
                 controllerAreaName);
         }
 
