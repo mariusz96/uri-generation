@@ -1,5 +1,5 @@
 # Uri Generation
-Strongly typed, cached URL generation for ASP.NET Core using lambda expressions:
+Strongly typed URL generation for ASP.NET Core:
 ```C#
 _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
@@ -40,7 +40,7 @@ UriGenerator will validate whether such endpoint name is defined in action's Htt
 To further improve on this, you can use classes such as Microsoft.Azure.Management.ResourceManager.Fluent.Core.ExpandableStringEnum instead of strings to define your endpoint names. That would require you to write a simple adapter class that takes a string from your class and passes it to UriGenerator.
 
 ## Performance:
-Extracting values from expression trees does introduce some overhead. To work around this problem, UriGeneration uses AspNetWebStack's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
+Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
 
 Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted controller names, action names, and route values' keys within the scope of the application lifetime.
 
