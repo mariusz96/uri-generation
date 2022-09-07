@@ -1,5 +1,5 @@
 # Uri Generation
-Strongly typed URL generation for ASP.NET Core:
+Strongly typed URL generation for ASP.NET Core using lambda expressions:
 ```C#
 _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
