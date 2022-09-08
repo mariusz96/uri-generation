@@ -172,7 +172,7 @@ namespace UriGeneration.Internal
 
             if (methodCall == null)
             {
-                _logger.MethodCallNotExtractedCast(actionBody);
+                _logger.MethodCallNotExtracted(actionBody);
                 return false;
             }
 
@@ -188,7 +188,7 @@ namespace UriGeneration.Internal
 
             if (method == null)
             {
-                _logger.MethodNotExtractedNull(methodCall);
+                _logger.MethodNotExtracted(methodCall);
                 return false;
             }
 
@@ -203,7 +203,7 @@ namespace UriGeneration.Internal
 
             if (controller == null)
             {
-                _logger.ControllerNotExtractedNull();
+                _logger.ControllerNotExtracted();
                 return false;
             }
 
@@ -325,7 +325,7 @@ namespace UriGeneration.Internal
 
             if (method.IsDefined(typeof(NonActionAttribute), inherit: true))
             {
-                _logger.MethodNameNotExtractedNonAction(methodName);
+                _logger.MethodNameNotExtracted(methodName);
                 return false;
             }
 
@@ -354,7 +354,7 @@ namespace UriGeneration.Internal
                     typeof(NonControllerAttribute),
                     inherit: true))
             {
-                _logger.ControllerNameNotExtractedNonController(controllerName);
+                _logger.ControllerNameNotExtracted(controllerName);
                 return false;
             }
 
@@ -390,7 +390,7 @@ namespace UriGeneration.Internal
 
             foreach (var inclduedMethodParameter in inclduedMethodParameters)
             {
-                // can't be null here - validated in IncludeMethodParameter
+                // nullability already validated in IncludeMethodParameter
                 string key = inclduedMethodParameter.Name!;
 
                 var methodCallArgument = methodCallArguments[
