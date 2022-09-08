@@ -3,6 +3,8 @@
 
 using System.Linq.Expressions;
 
+#nullable disable
+
 namespace UriGeneration.AspNetWebStack.ExpressionUtil
 {
     // This is a visitor which produces a fingerprint of an expression. It doesn't

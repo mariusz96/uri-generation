@@ -5,6 +5,8 @@ using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
 
+#nullable disable
+
 namespace UriGeneration.AspNetWebStack.ExpressionUtil
 {
     internal static class CachedExpressionCompiler

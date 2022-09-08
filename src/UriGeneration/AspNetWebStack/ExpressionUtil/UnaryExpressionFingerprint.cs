@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 #pragma warning disable 659 // overrides AddToHashCodeCombiner instead
+#nullable disable
 
 namespace UriGeneration.AspNetWebStack.ExpressionUtil
 {

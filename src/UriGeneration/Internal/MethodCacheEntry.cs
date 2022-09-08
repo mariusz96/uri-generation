@@ -8,7 +8,8 @@ namespace UriGeneration.Internal
         private static readonly MethodCacheEntry InvalidInstance =
             new(isValid: false);
 
-        [MemberNotNull(
+        [MemberNotNullWhen(
+            true,
             nameof(MethodName),
             nameof(ControllerName),
             nameof(IncludedMethodParameters))]

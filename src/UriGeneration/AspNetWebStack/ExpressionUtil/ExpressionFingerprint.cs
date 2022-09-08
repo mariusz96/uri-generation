@@ -3,6 +3,8 @@
 
 using System.Linq.Expressions;
 
+#nullable disable
+
 namespace UriGeneration.AspNetWebStack.ExpressionUtil
 {
     // Serves as the base class for all expression fingerprints. Provides a default implementation

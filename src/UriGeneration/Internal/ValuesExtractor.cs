@@ -9,6 +9,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UriGeneration.Internal
 {
@@ -46,7 +47,7 @@ namespace UriGeneration.Internal
 
         public bool TryExtractValues<TController>(
             LambdaExpression action,
-            out Values values,
+            [NotNullWhen(true)] out Values? values,
             string? endpointName = null,
             UriOptions? options = null)
                 where TController : ControllerBase
@@ -56,7 +57,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            values = default!;
+            values = default;
 
             try
             {
@@ -159,14 +160,14 @@ namespace UriGeneration.Internal
 
         private bool TryExtractMethodCall(
             Expression actionBody,
-            out MethodCallExpression methodCall)
+            [NotNullWhen(true)] out MethodCallExpression? methodCall)
         {
-            methodCall = (actionBody as MethodCallExpression)!;
+            methodCall = actionBody as MethodCallExpression;
 
             if (methodCall == null
                 && actionBody is UnaryExpression objectCast)
             {
-                methodCall = (objectCast.Operand as MethodCallExpression)!;
+                methodCall = objectCast.Operand as MethodCallExpression;
             }
 
             if (methodCall == null)
@@ -181,7 +182,7 @@ namespace UriGeneration.Internal
 
         private bool TryExtractMethod(
             MethodCallExpression methodCall,
-            out MethodInfo method)
+            [NotNullWhen(true)] out MethodInfo? method)
         {
             method = methodCall.Method;
 
@@ -235,14 +236,14 @@ namespace UriGeneration.Internal
         {
             if (endpointName != null)
             {
-                bool endpointNameDefined = method
+                bool endpointNameFound = method
                     .GetCustomAttributes(
                         typeof(IRouteTemplateProvider),
                         inherit: true)
                     .Cast<IRouteTemplateProvider>()
                     .Any(a => a.Name == endpointName);
 
-                if (!endpointNameDefined)
+                if (!endpointNameFound)
                 {
                     _logger.EndpointNameNotFound(endpointName);
                     return false;
@@ -283,12 +284,12 @@ namespace UriGeneration.Internal
                 return false;
             }
 
-            var type = methodParameter.ParameterType;
+            var methodParameterType = methodParameter.ParameterType;
 
-            if (type.IsAssignableTo(typeof(IFormFile))
-                || type.IsAssignableTo(typeof(IEnumerable<IFormFile>))
-                || type.IsAssignableTo(typeof(CancellationToken))
-                || type.IsAssignableTo(typeof(FormCollection)))
+            if (methodParameterType.IsAssignableTo(typeof(IFormFile))
+                || methodParameterType.IsAssignableTo(typeof(IEnumerable<IFormFile>))
+                || methodParameterType.IsAssignableTo(typeof(CancellationToken))
+                || methodParameterType.IsAssignableTo(typeof(FormCollection)))
             {
                 if (log)
                 {
@@ -297,14 +298,13 @@ namespace UriGeneration.Internal
                 return false;
             }
 
-            var isExcludedAttributeDefined = methodParameter
-                .GetCustomAttributes(inherit: true)
-                .Any(attr => attr is FromBodyAttribute
-                             || attr is FromFormAttribute
-                             || attr is FromHeaderAttribute
-                             || attr is FromServicesAttribute);
+            var methodParameterAttributes = methodParameter
+                .GetCustomAttributes(inherit: true);
 
-            if (isExcludedAttributeDefined)
+            if (methodParameterAttributes.Any(attr => attr is FromBodyAttribute
+                || attr is FromFormAttribute
+                || attr is FromHeaderAttribute
+                || attr is FromServicesAttribute))
             {
                 if (log)
                 {
@@ -319,7 +319,7 @@ namespace UriGeneration.Internal
 
         private bool TryExtractMethodName(
             MethodInfo method,
-            out string methodName)
+            [NotNullWhen(true)] out string? methodName)
         {
             methodName = method.Name;
 
@@ -346,7 +346,7 @@ namespace UriGeneration.Internal
 
         private bool TryExtractControllerName(
             Type controller,
-            out string controllerName)
+            [NotNullWhen(true)] out string? controllerName)
         {
             controllerName = controller.Name;
 
@@ -390,7 +390,7 @@ namespace UriGeneration.Internal
 
             foreach (var inclduedMethodParameter in inclduedMethodParameters)
             {
-                // nullablity validated in IncludeMethodParameter
+                // can't be null here - validated in IncludeMethodParameter
                 string key = inclduedMethodParameter.Name!;
 
                 var methodCallArgument = methodCallArguments[
@@ -419,7 +419,7 @@ namespace UriGeneration.Internal
             return routeValues;
         }
 
-        private static object EvaluateExpression(
+        private static object? EvaluateExpression(
             Expression expression,
             UriOptions? options)
         {
@@ -430,13 +430,13 @@ namespace UriGeneration.Internal
             else
             {
                 // see CachedExpressionCompiler.Evaluate
-                Expression<Func<object, object>> lambdaExpr =
-                    Expression.Lambda<Func<object, object>>(
+                Expression<Func<object?, object?>> lambdaExpr =
+                    Expression.Lambda<Func<object?, object?>>(
                         Expression.Convert(expression, typeof(object)),
                         UnusedParameterExpr);
 
                 var func = lambdaExpr.Compile();
-                return func(null!);
+                return func(null);
             }
         }
     }
