@@ -390,7 +390,7 @@ namespace UriGeneration.Internal
 
             foreach (var inclduedMethodParameter in inclduedMethodParameters)
             {
-                // nullability already validated in IncludeMethodParameter
+                // nullability validated in IncludeMethodParameter
                 string key = inclduedMethodParameter.Name!;
 
                 var methodCallArgument = methodCallArguments[

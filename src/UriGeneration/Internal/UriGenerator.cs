@@ -30,6 +30,48 @@ namespace UriGeneration.Internal
         }
 
         public string? GetPathByExpression<TController>(
+            Expression<Action<TController>> action,
+            string? endpointName = null,
+            PathString pathBase = default,
+            FragmentString fragment = default,
+            UriOptions? options = null)
+                where TController : ControllerBase
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            return GetPathByExpressionWithoutHttpContext<TController>(
+                action,
+                endpointName,
+                pathBase,
+                fragment,
+                options);
+        }
+
+        public string? GetPathByExpression<TController>(
+            Expression<Func<TController, object?>> action,
+            string? endpointName = null,
+            PathString pathBase = default,
+            FragmentString fragment = default,
+            UriOptions? options = null)
+                where TController : ControllerBase
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            return GetPathByExpressionWithoutHttpContext<TController>(
+                action,
+                endpointName,
+                pathBase,
+                fragment,
+                options);
+        }
+
+        public string? GetPathByExpression<TController>(
            HttpContext httpContext,
            Expression<Action<TController>> action,
            string? endpointName = null,
@@ -48,7 +90,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return GetPathByExpressionCore<TController>(
+            return GetPathByExpressionWithHttpContext<TController>(
                 httpContext,
                 action,
                 endpointName,
@@ -76,10 +118,60 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return GetPathByExpressionCore<TController>(
+            return GetPathByExpressionWithHttpContext<TController>(
                 httpContext,
                 action,
                 endpointName,
+                pathBase,
+                fragment,
+                options);
+        }
+
+        public string? GetUriByExpression<TController>(
+            Expression<Action<TController>> action,
+            string? endpointName,
+            string scheme,
+            HostString host,
+            PathString pathBase = default,
+            FragmentString fragment = default,
+            UriOptions? options = null)
+                where TController : ControllerBase
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            return GetUriByExpressionWithoutHttpContext<TController>(
+                action,
+                endpointName,
+                scheme,
+                host,
+                pathBase,
+                fragment,
+                options);
+        }
+
+        public string? GetUriByExpression<TController>(
+            Expression<Func<TController, object?>> action,
+            string? endpointName,
+            string scheme,
+            HostString host,
+            PathString pathBase = default,
+            FragmentString fragment = default,
+            UriOptions? options = null)
+                where TController : ControllerBase
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            return GetUriByExpressionWithoutHttpContext<TController>(
+                action,
+                endpointName,
+                scheme,
+                host,
                 pathBase,
                 fragment,
                 options);
@@ -106,7 +198,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return GetUriByExpressionCore<TController>(
+            return GetUriByExpressionWithHttpContext<TController>(
                 httpContext,
                 action,
                 endpointName,
@@ -138,7 +230,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            return GetUriByExpressionCore<TController>(
+            return GetUriByExpressionWithHttpContext<TController>(
                 httpContext,
                 action,
                 endpointName,
@@ -149,7 +241,50 @@ namespace UriGeneration.Internal
                 options);
         }
 
-        private string? GetPathByExpressionCore<TController>(
+        private string? GetPathByExpressionWithoutHttpContext<TController>(
+            LambdaExpression action,
+            string? endpointName = null,
+            PathString pathBase = default,
+            FragmentString fragment = default,
+            UriOptions? options = null)
+                where TController : ControllerBase
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            if (!_valuesExtractor.TryExtractValues<TController>(
+                action,
+                out var values,
+                endpointName,
+                options))
+            {
+                return default;
+            }
+
+            if (endpointName != null)
+            {
+                return _linkGenerator.GetPathByName(
+                    endpointName: endpointName,
+                    values: values.RouteValues,
+                    pathBase: pathBase,
+                    fragment: fragment,
+                    options: options);
+            }
+            else
+            {
+                return _linkGenerator.GetPathByAction(
+                    action: values.ActionName,
+                    controller: values.ControllerName,
+                    values: values.RouteValues,
+                    pathBase: pathBase,
+                    fragment: fragment,
+                    options: options);
+            }
+        }
+
+        private string? GetPathByExpressionWithHttpContext<TController>(
             HttpContext httpContext,
             LambdaExpression action,
             string? endpointName = null,
@@ -200,7 +335,56 @@ namespace UriGeneration.Internal
             }
         }
 
-        private string? GetUriByExpressionCore<TController>(
+        private string? GetUriByExpressionWithoutHttpContext<TController>(
+            LambdaExpression action,
+            string? endpointName,
+            string scheme,
+            HostString host,
+            PathString pathBase = default,
+            FragmentString fragment = default,
+            UriOptions? options = null)
+                where TController : ControllerBase
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            if (!_valuesExtractor.TryExtractValues<TController>(
+                action,
+                out var values,
+                endpointName,
+                options))
+            {
+                return default;
+            }
+
+            if (endpointName != null)
+            {
+                return _linkGenerator.GetUriByName(
+                    endpointName: endpointName,
+                    values: values.RouteValues,
+                    scheme: scheme,
+                    host: host,
+                    pathBase: pathBase,
+                    fragment: fragment,
+                    options: options);
+            }
+            else
+            {
+                return _linkGenerator.GetUriByAction(
+                     action: values.ActionName,
+                     controller: values.ControllerName,
+                     values: values.RouteValues,
+                     scheme: scheme,
+                     host: host,
+                     pathBase: pathBase,
+                     fragment: fragment,
+                     options: options);
+            }
+        }
+
+        private string? GetUriByExpressionWithHttpContext<TController>(
             HttpContext httpContext,
             LambdaExpression action,
             string? endpointName = null,
