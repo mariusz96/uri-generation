@@ -1,15 +1,14 @@
-﻿using UriGeneration.AspNetWebStack;
-using UriGeneration.Internal.Abstractions;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Http;
-using System.Diagnostics.CodeAnalysis;
+using UriGeneration.AspNetWebStack;
+using UriGeneration.Internal.Abstractions;
 
 namespace UriGeneration.Internal
 {
