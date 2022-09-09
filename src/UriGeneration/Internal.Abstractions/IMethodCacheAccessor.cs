@@ -2,7 +2,7 @@
 
 namespace UriGeneration.Internal.Abstractions
 {
-    internal interface IMethodCacheAccessor
+    internal interface IMethodCacheAccessor : IDisposable
     {
         IMemoryCache Cache { get; }
     }

@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace UriGeneration.Internal
 {
-    internal class MethodCacheAccessor : IMethodCacheAccessor, IDisposable
+    internal sealed class MethodCacheAccessor : IMethodCacheAccessor
     {
         public IMemoryCache Cache { get; }
 
