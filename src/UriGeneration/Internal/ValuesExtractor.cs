@@ -103,8 +103,7 @@ namespace UriGeneration.Internal
                     }
                 }
 
-                if (!ValidateMethodConcreteness(method, controller)
-                    || !ValidateEnpointName(endpointName, method))
+                if (!ValidateMethodConcreteness(method, controller))
                 {
                     if (options?.BypassMethodCache is not true)
                     {
@@ -225,29 +224,6 @@ namespace UriGeneration.Internal
             {
                 _logger.MethodDeclaringType();
                 return false;
-            }
-
-            return true;
-        }
-
-        private bool ValidateEnpointName(
-            string? endpointName,
-            MethodInfo method)
-        {
-            if (endpointName != null)
-            {
-                bool endpointNameFound = method
-                    .GetCustomAttributes(
-                        typeof(IRouteTemplateProvider),
-                        inherit: true)
-                    .Cast<IRouteTemplateProvider>()
-                    .Any(a => a.Name == endpointName);
-
-                if (!endpointNameFound)
-                {
-                    _logger.EndpointNameNotFound(endpointName);
-                    return false;
-                }
             }
 
             return true;

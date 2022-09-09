@@ -1,5 +1,5 @@
 # Uri Generation
-Strongly typed URL generation for ASP.NET Core using lambda expressions:
+Strongly typed URL generation for ASP.NET Core:
 ```C#
 _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
@@ -35,8 +35,6 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
     c => c.GetInvoice(2),
     "GetInvoice");
 ```
-UriGenerator will validate whether such endpoint name is defined in action's HttpMethod, AcceptVerbs, or Route attribute and generate URL based on it and expression's route values.
-
 To further improve on this, you can use classes such as Microsoft.Azure.Management.ResourceManager.Fluent.Core.ExpandableStringEnum instead of strings to define your endpoint names. That would require you to write a simple adapter class that takes a string from your class and passes it to UriGenerator.
 
 ## Performance:
