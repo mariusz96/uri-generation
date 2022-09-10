@@ -74,7 +74,7 @@ builder.Services.AddUriGeneration();
 builder.Services.AddUriGeneration(o =>
 {
     o.SizeLimit = 500;
-    o.CompactionPercentage = 0.75;
+    o.CompactionPercentage = 0.5;
 });
 ```
 - Request an instance of IUriGenerator singleton service from any constructor in your app:

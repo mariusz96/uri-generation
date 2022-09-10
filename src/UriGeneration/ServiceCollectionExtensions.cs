@@ -11,7 +11,7 @@ namespace UriGeneration
             o =>
             {
                 o.SizeLimit = 500;
-                o.CompactionPercentage = 0.75;
+                o.CompactionPercentage = 0.5;
             };
 
         public static IServiceCollection AddUriGeneration(
