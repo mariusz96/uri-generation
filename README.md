@@ -49,7 +49,7 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
     c => c.GetInvoice(2),
     "GetInvoice");
 ```
-To further improve on this, you can use classes such as Microsoft.Azure.Management.ResourceManager.Fluent.Core.ExpandableStringEnum instead of strings to define your endpoint names. That would require you to write a simple adapter class that takes a string from your class and passes it to UriGenerator.
+And to further improve on this, you can use classes such as Microsoft.Azure.Management.ResourceManager.Fluent.Core.ExpandableStringEnum instead of strings to define your endpoint names. That would require you to write a simple adapter class that takes a string from your class and passes it to UriGenerator.
 
 ## Performance:
 Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
