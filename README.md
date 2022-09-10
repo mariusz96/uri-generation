@@ -11,17 +11,30 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
 - Delegates URL generation to LinkGenerator
 - Supports ActionName, Area, NonAction, NonController, FromBody, FromForm, FromHeader and FromServices attributes
 - Supports IFormFile, IFormFileCollection, IEnumerable&lt;IFormFile&gt;, CancellationToken and FormCollection types
-- Supports dedicated conventional routes
+- Supports specifying endpoint names
 - Supports Controller and Async suffixes
 - Supports LinkOptions
 - Supports bypassable caching
 
-## Attribute routing:
-If multiple URL paths match an action in your controller:
+## Endpoint names:
+If you use multiple named attribute routes:
 ```C#
 [HttpGet("api/invoices/{id}", Name = "ApiGetInvoice")]
 [HttpGet("invoices/{id}", Name = "GetInvoice")]
 public InvoiceResource GetInvoice(int id)
+```
+or dedicated conventional routes:
+```C#
+app.MapControllerRoute(
+    name: "ApiGetInvoice",
+    pattern: "api/invoices/{id}",
+    defaults: new { controller = "Invoices", action = "GetInvoice" });
+```
+```C#
+app.MapControllerRoute(
+    name: "GetInvoice",
+    pattern: "invoices/{id}",
+    defaults: new { controller = "Invoices", action = "GetInvoice" });
 ```
 you can specify an endpoint name to generate an endpoint-specific URL:
 ```C#
