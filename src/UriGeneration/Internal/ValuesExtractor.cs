@@ -68,7 +68,7 @@ namespace UriGeneration.Internal
                 }
 
                 var methodCache = _methodCacheAccessor.Cache;
-                var key = (method, controller, endpointName);
+                var key = new MethodCacheKey(method, controller, endpointName);
 
                 if (options?.BypassMethodCache is not true
                     && methodCache.TryGetValue(key, out MethodCacheEntry entry))
