@@ -9,15 +9,15 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
 ## Features:
 - Extracts action name, controller name, and route values from expression
 - Delegates URL generation to LinkGenerator
-- Supports ActionName, Area, NonAction, NonController, FromBody, FromForm, FromHeader and FromServices attributes
-- Supports IFormFile, IFormFileCollection, IEnumerable&lt;IFormFile&gt;, CancellationToken and FormCollection types
-- Supports specifying endpoint name
+- Supports ActionName, Area, NonAction, NonController, FromBody, FromForm, FromHeader, and FromServices attributes
+- Supports IFormFile, IFormFileCollection, IEnumerable&lt;IFormFile&gt;, CancellationToken, and FormCollection types
+- Supports specifying an endpoint name
 - Supports Controller and Async suffixes
 - Supports LinkOptions
 - Supports bypassable caching
 
 ## Endpoint names:
-If you use multiple named attribute routes:
+If you use named attribute routes:
 ```C#
 [HttpGet("api/invoices/{id}", Name = "ApiGetInvoice")]
 [HttpGet("invoices/{id}", Name = "GetInvoice")]
@@ -73,7 +73,7 @@ builder.Services.AddUriGeneration();
 ```C#
 builder.Services.AddUriGeneration(o =>
 {
-    o.SizeLimit = 100;
+    o.SizeLimit = 500;
     o.CompactionPercentage = 0.75;
 });
 ```

@@ -7,11 +7,12 @@ namespace UriGeneration
 {
     public static class ServiceCollectionExtensions
     {
-        private static readonly Action<MethodCacheOptions> DefaultConfigure = o =>
-        {
-            o.SizeLimit = 100;
-            o.CompactionPercentage = 0.75;
-        };
+        private static readonly Action<MethodCacheOptions> DefaultConfigure =
+            o =>
+            {
+                o.SizeLimit = 500;
+                o.CompactionPercentage = 0.75;
+            };
 
         public static IServiceCollection AddUriGeneration(
             this IServiceCollection services,
