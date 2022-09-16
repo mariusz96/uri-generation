@@ -56,16 +56,17 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(action));
             }
 
-            values = default;
-
             try
             {
-                if (!TryExtractMethodCall(action.Body, out var methodCall)
-                    || !TryExtractMethod(methodCall, out var method)
-                    || !TryExtractController<TController>(out var controller))
+                values = default;
+
+                if (!TryExtractMethodCall(action.Body, out var methodCall))
                 {
                     return false;
                 }
+
+                var method = ExtractMethod(methodCall);
+                var controller = ExtractController<TController>();
 
                 var methodCache = _methodCacheAccessor.Cache;
                 var key = new MethodCacheKey(method, controller, endpointName);
@@ -102,7 +103,9 @@ namespace UriGeneration.Internal
                     }
                 }
 
-                if (!ValidateMethodConcreteness(method, controller))
+                if (!ValidateMethodConcreteness(method, controller)
+                    || !TryExtractMethodName(method, out var methodName)
+                    || !TryExtractControllerName(controller, out var controllerName))
                 {
                     if (options?.BypassMethodCache is not true)
                     {
@@ -115,12 +118,6 @@ namespace UriGeneration.Internal
 
                 var includedMethodParameters = ExtractIncludedMethodParameters(
                     method);
-
-                if (!TryExtractMethodName(method, out var methodName)
-                    || !TryExtractControllerName(controller, out var controllerName))
-                {
-                    return false;
-                }
 
                 string? controllerAreaName = ExtractControllerAreaName(
                     controller);
@@ -152,6 +149,8 @@ namespace UriGeneration.Internal
             catch (Exception exception)
             {
                 _logger.ValuesNotExtracted(action, exception);
+
+                values = default;
                 return false;
             }
         }
@@ -178,35 +177,19 @@ namespace UriGeneration.Internal
             return true;
         }
 
-        private bool TryExtractMethod(
-            MethodCallExpression methodCall,
-            [NotNullWhen(true)] out MethodInfo? method)
+        private MethodInfo ExtractMethod(MethodCallExpression methodCall)
         {
-            method = methodCall.Method;
-
-            if (method == null)
-            {
-                _logger.MethodNotExtracted(methodCall);
-                return false;
-            }
-
+            var method = methodCall.Method;
             _logger.MethodExtracted();
-            return true;
+            return method;
         }
 
-        private bool TryExtractController<TController>(out Type controller)
+        private Type ExtractController<TController>()
             where TController : ControllerBase
         {
-            controller = typeof(TController);
-
-            if (controller == null)
-            {
-                _logger.ControllerNotExtracted();
-                return false;
-            }
-
+            var controller = typeof(TController);
             _logger.ControllerExtracted();
-            return true;
+            return controller;
         }
 
         private bool ValidateMethodConcreteness(
