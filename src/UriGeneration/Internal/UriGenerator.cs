@@ -1,8 +1,7 @@
-﻿using UriGeneration.Internal.Abstractions;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using System.Linq.Expressions;
+using UriGeneration.Internal.Abstractions;
 
 namespace UriGeneration.Internal
 {
@@ -35,7 +34,7 @@ namespace UriGeneration.Internal
             PathString pathBase = default,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (action == null)
             {
@@ -56,7 +55,7 @@ namespace UriGeneration.Internal
             PathString pathBase = default,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (action == null)
             {
@@ -78,7 +77,7 @@ namespace UriGeneration.Internal
            PathString? pathBase = null,
            FragmentString fragment = default,
            UriOptions? options = null)
-               where TController : ControllerBase
+               where TController : class
         {
             if (httpContext == null)
             {
@@ -106,7 +105,7 @@ namespace UriGeneration.Internal
             PathString? pathBase = null,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (httpContext == null)
             {
@@ -135,7 +134,7 @@ namespace UriGeneration.Internal
             PathString pathBase = default,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (action == null)
             {
@@ -160,7 +159,7 @@ namespace UriGeneration.Internal
             PathString pathBase = default,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (action == null)
             {
@@ -186,7 +185,7 @@ namespace UriGeneration.Internal
             PathString? pathBase = null,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (httpContext == null)
             {
@@ -218,7 +217,7 @@ namespace UriGeneration.Internal
             PathString? pathBase = null,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (httpContext == null)
             {
@@ -247,7 +246,7 @@ namespace UriGeneration.Internal
             PathString pathBase = default,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (action == null)
             {
@@ -291,7 +290,7 @@ namespace UriGeneration.Internal
             PathString? pathBase = null,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (httpContext == null)
             {
@@ -343,7 +342,7 @@ namespace UriGeneration.Internal
             PathString pathBase = default,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (action == null)
             {
@@ -393,7 +392,7 @@ namespace UriGeneration.Internal
             PathString? pathBase = null,
             FragmentString fragment = default,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (httpContext == null)
             {

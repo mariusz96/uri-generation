@@ -49,7 +49,7 @@ namespace UriGeneration.Internal
             [NotNullWhen(true)] out Values? values,
             string? endpointName = null,
             UriOptions? options = null)
-                where TController : ControllerBase
+                where TController : class
         {
             if (action == null)
             {
@@ -185,7 +185,7 @@ namespace UriGeneration.Internal
         }
 
         private Type ExtractController<TController>()
-            where TController : ControllerBase
+            where TController : class
         {
             var controller = typeof(TController);
             _logger.ControllerExtracted();
