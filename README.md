@@ -11,12 +11,12 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
 - Delegates URL generation to LinkGenerator
 - Supports ActionName, Area, NonAction, NonController, FromBody, FromForm, FromHeader, and FromServices attributes
 - Supports IFormFile, IFormFileCollection, IEnumerable&lt;IFormFile&gt;, CancellationToken, and FormCollection types
-- Supports specifying endpoint name
+- Supports specifying an endpoint name
 - Supports Controller and Async suffixes
 - Supports LinkOptions
 - Supports bypassable caching
 
-## Specifying endpoint name:
+## Specifying an endpoint name:
 If you use named attribute routes:
 ```C#
 [HttpGet("api/invoices/{id}", Name = "ApiGetInvoice")]
@@ -49,7 +49,7 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
     c => c.GetInvoice(2),
     "GetInvoice");
 ```
-And to further improve on this, you can use classes such as Microsoft.Azure.Management.ResourceManager.Fluent.Core.ExpandableStringEnum instead of strings to define your endpoint names. That would require you to write a simple adapter class that takes a string from your class and passes it to UriGenerator.
+And to further improve on this, you can use classes such as Microsoft.Azure.Management.ResourceManager.Fluent.Core.ExpandableStringEnum instead of strings to define your endpoint names (that would require you to write a simple adapter class that takes a string from your class and passes it to UriGenerator).
 
 ## Performance:
 Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
