@@ -372,6 +372,7 @@ namespace UriGeneration.Internal
             if (controllerAreaName != null)
             {
                 routeValues.Add(AreaKey, controllerAreaName);
+                // logged in ExtractControllerAreaName
             }
 
             return routeValues;
