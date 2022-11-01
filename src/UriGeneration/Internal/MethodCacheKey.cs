@@ -6,16 +6,11 @@ namespace UriGeneration.Internal
     {
         public MethodInfo Method { get; }
         public Type Controller { get; }
-        public string? EndpointName { get; }
 
-        public MethodCacheKey(
-            MethodInfo method,
-            Type controller,
-            string? endpointName = null)
+        public MethodCacheKey(MethodInfo method, Type controller)
         {
             Method = method;
             Controller = controller;
-            EndpointName = endpointName;
         }
     }
 }

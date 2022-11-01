@@ -256,7 +256,6 @@ namespace UriGeneration.Internal
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,
-                endpointName,
                 options))
             {
                 return default;
@@ -305,7 +304,6 @@ namespace UriGeneration.Internal
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,
-                endpointName,
                 options))
             {
                 return default;
@@ -352,7 +350,6 @@ namespace UriGeneration.Internal
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,
-                endpointName,
                 options))
             {
                 return default;
@@ -407,7 +404,6 @@ namespace UriGeneration.Internal
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,
-                endpointName,
                 options))
             {
                 return default;

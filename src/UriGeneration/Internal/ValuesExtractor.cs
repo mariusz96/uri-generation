@@ -47,7 +47,6 @@ namespace UriGeneration.Internal
         public bool TryExtractValues<TController>(
             LambdaExpression action,
             [NotNullWhen(true)] out Values? values,
-            string? endpointName = null,
             UriOptions? options = null)
                 where TController : class
         {
@@ -69,7 +68,7 @@ namespace UriGeneration.Internal
                 var controller = ExtractController<TController>();
 
                 var methodCache = _methodCacheAccessor.Cache;
-                var key = new MethodCacheKey(method, controller, endpointName);
+                var key = new MethodCacheKey(method, controller);
 
                 if (options?.BypassMethodCache is not true
                     && methodCache.TryGetValue(key, out MethodCacheEntry entry))
