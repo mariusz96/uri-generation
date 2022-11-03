@@ -20,7 +20,7 @@ namespace UriGeneration.Internal
 
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
-        private static readonly ParameterExpression UnusedParameterExpr =
+        private static readonly ParameterExpression UnusedParameterExpression =
             Expression.Parameter(typeof(object), "_unused");
 
         private readonly IMethodCacheAccessor _methodCacheAccessor;
@@ -391,7 +391,7 @@ namespace UriGeneration.Internal
                 Expression<Func<object?, object?>> lambdaExpr =
                     Expression.Lambda<Func<object?, object?>>(
                         Expression.Convert(expression, typeof(object)),
-                        UnusedParameterExpr);
+                        UnusedParameterExpression);
 
                 var func = lambdaExpr.Compile();
                 return func(null);
