@@ -49,7 +49,7 @@ _uriGenerator.GetUriByExpression<InvoicesController>(
     c => c.GetInvoice(2),
     "GetInvoice");
 ```
-For more information on endpoint names, see [Routing in ASP.NET Core](https://docs.microsoft.com/aspnet/core/fundamentals/routing).
+For more information on endpoint names, see ASP.NET Core documentation.
 
 ## Performance:
 Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
