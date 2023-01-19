@@ -1,7 +1,7 @@
 # Uri Generation
 Strongly typed URL generation for ASP.NET Core:
 ```C#
-_uriGenerator.GetUriByExpression<InvoicesController>(
+string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
     c => c.GetInvoice(2));
 ```
@@ -38,13 +38,13 @@ app.MapControllerRoute(
 ```
 you can specify an endpoint name to generate an endpoint-specific URL:
 ```C#
-_uriGenerator.GetUriByExpression<InvoicesController>(
+string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
     c => c.GetInvoice(2),
     "ApiGetInvoice");
 ```
 ```C#
-_uriGenerator.GetUriByExpression<InvoicesController>(
+string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
     c => c.GetInvoice(2),
     "GetInvoice");
