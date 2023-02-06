@@ -388,12 +388,12 @@ namespace UriGeneration.Internal
             else
             {
                 // see CachedExpressionCompiler.Evaluate
-                Expression<Func<object?, object?>> lambdaExpr =
+                Expression<Func<object?, object?>> lambdaExpression =
                     Expression.Lambda<Func<object?, object?>>(
                         Expression.Convert(expression, typeof(object)),
                         UnusedParameterExpression);
 
-                var func = lambdaExpr.Compile();
+                var func = lambdaExpression.Compile();
                 return func(null);
             }
         }
