@@ -338,20 +338,20 @@ namespace UriGeneration.Internal
         }
 
         private RouteValueDictionary ExtractRouteValues(
-            ParameterInfo[] inclduedMethodParameters,
+            ParameterInfo[] includedMethodParameters,
             ReadOnlyCollection<Expression> methodCallArguments,
             string? controllerAreaName,
             UriOptions? options)
         {
             var routeValues = new RouteValueDictionary();
 
-            foreach (var inclduedMethodParameter in inclduedMethodParameters)
+            foreach (var includedMethodParameter in includedMethodParameters)
             {
                 // nullability validated in IncludeMethodParameter
-                string key = inclduedMethodParameter.Name!;
+                string key = includedMethodParameter.Name!;
 
                 var methodCallArgument = methodCallArguments[
-                    inclduedMethodParameter.Position];
+                    includedMethodParameter.Position];
 
                 object? value;
 
