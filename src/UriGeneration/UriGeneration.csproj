@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>Mariusz Stępień</Authors>
-    <Description>Strongly typed URL generation for ASP.NET Core</Description>
+    <Description>A strongly typed URL generation library for ASP.NET Core</Description>
     <PackageProjectUrl>https://github.com/mariusz96/uri-generation</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mariusz96/uri-generation</RepositoryUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
