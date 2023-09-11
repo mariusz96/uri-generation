@@ -246,7 +246,7 @@ namespace UriGeneration.Internal
             if (methodParameterType.IsAssignableTo(typeof(IFormFile))
                 || methodParameterType.IsAssignableTo(typeof(IEnumerable<IFormFile>))
                 || methodParameterType.IsAssignableTo(typeof(CancellationToken))
-                || methodParameterType.IsAssignableTo(typeof(FormCollection)))
+                || methodParameterType.IsAssignableTo(typeof(IFormCollection)))
             {
                 if (log)
                 {

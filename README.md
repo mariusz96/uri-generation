@@ -10,7 +10,7 @@ string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
 - Extracts action name, controller name, and route values from expression
 - Delegates URL generation to LinkGenerator
 - Supports ActionName, Area, NonAction, NonController, FromBody, FromForm, FromHeader, and FromServices attributes
-- Supports IFormFile, IFormFileCollection, IEnumerable&lt;IFormFile&gt;, CancellationToken, and FormCollection types
+- Supports IFormFile, IFormFileCollection, IEnumerable&lt;IFormFile&gt;, CancellationToken, and IFormCollection types
 - Supports specifying an endpoint name
 - Supports Controller and Async suffixes
 - Supports LinkOptions
