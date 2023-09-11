@@ -71,9 +71,9 @@ namespace UriGeneration.Internal
                 var key = new MethodCacheKey(method, controller);
 
                 if (options?.BypassMethodCache is not true
-                    && methodCache.TryGetValue(key, out MethodCacheEntry entry))
+                    && methodCache.TryGetValue(key, out MethodCacheEntry? entry))
                 {
-                    if (entry.IsValid)
+                    if (entry!.IsValid)
                     {
                         _logger.ValidCacheEntryRetrieved(
                             entry.MethodName,
@@ -368,8 +368,8 @@ namespace UriGeneration.Internal
                 _logger.RouteValueExtracted(key, value);
             }
 
-                routeValues.Add(AreaKey, controllerAreaName);
-                // logged in ExtractControllerAreaName
+            routeValues.Add(AreaKey, controllerAreaName);
+            // logged in ExtractControllerAreaName
 
             return routeValues;
         }
