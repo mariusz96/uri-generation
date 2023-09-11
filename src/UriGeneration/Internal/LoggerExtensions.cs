@@ -17,8 +17,8 @@ namespace UriGeneration.Internal
         [LoggerMessage(1004, LogLevel.Debug, "Successfully extracted Type of TController.", EventName = nameof(ControllerExtracted))]
         public static partial void ControllerExtracted(this ILogger logger);
 
-        [LoggerMessage(1005, LogLevel.Debug, "Successfully retrieved valid cache entry with values: {MethodName}, {ControllerName} and {AreaKey}, {ControllerAreaName} (if present).", EventName = nameof(ValidCacheEntryRetrieved))]
-        public static partial void ValidCacheEntryRetrieved(this ILogger logger, string methodName, string controllerName, string areaKey, string? controllerAreaName);
+        [LoggerMessage(1005, LogLevel.Debug, "Successfully retrieved valid cache entry with values: {MethodName}, {ControllerName} and {AreaKey}, {ControllerAreaName}.", EventName = nameof(ValidCacheEntryRetrieved))]
+        public static partial void ValidCacheEntryRetrieved(this ILogger logger, string methodName, string controllerName, string areaKey, string controllerAreaName);
 
         [LoggerMessage(1006, LogLevel.Debug, "Successfully retrieved invalid cache entry: no values will be extracted (see previous log messages for further details).", EventName = nameof(InvalidCacheEntryRetrieved))]
         public static partial void InvalidCacheEntryRetrieved(this ILogger logger);

@@ -118,7 +118,7 @@ namespace UriGeneration.Internal
                 var includedMethodParameters = ExtractIncludedMethodParameters(
                     method);
 
-                string? controllerAreaName = ExtractControllerAreaName(
+                string controllerAreaName = ExtractControllerAreaName(
                     controller);
 
                 var routeValues = ExtractRouteValues(
@@ -321,7 +321,7 @@ namespace UriGeneration.Internal
             return true;
         }
 
-        private string? ExtractControllerAreaName(Type controller)
+        private string ExtractControllerAreaName(Type controller)
         {
             var areaAttribute = controller
                 .GetCustomAttributes<AreaAttribute>(inherit: true)
@@ -334,13 +334,13 @@ namespace UriGeneration.Internal
                 return controllerAreaName;
             }
 
-            return default;
+            return string.Empty; // don't use the 'ambient' value of area
         }
 
         private RouteValueDictionary ExtractRouteValues(
             ParameterInfo[] includedMethodParameters,
             ReadOnlyCollection<Expression> methodCallArguments,
-            string? controllerAreaName,
+            string controllerAreaName,
             UriOptions? options)
         {
             var routeValues = new RouteValueDictionary();
@@ -368,11 +368,8 @@ namespace UriGeneration.Internal
                 _logger.RouteValueExtracted(key, value);
             }
 
-            if (controllerAreaName != null)
-            {
                 routeValues.Add(AreaKey, controllerAreaName);
                 // logged in ExtractControllerAreaName
-            }
 
             return routeValues;
         }

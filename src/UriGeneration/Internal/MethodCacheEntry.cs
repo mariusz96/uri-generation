@@ -9,7 +9,8 @@ namespace UriGeneration.Internal
             true,
             nameof(MethodName),
             nameof(ControllerName),
-            nameof(IncludedMethodParameters))]
+            nameof(IncludedMethodParameters),
+            nameof(ControllerAreaName))]
         public bool IsValid { get; }
         public string? MethodName { get; }
         public string? ControllerName { get; }
@@ -26,7 +27,7 @@ namespace UriGeneration.Internal
             string methodName,
             string controllerName,
             ParameterInfo[] includedMethodParameters,
-            string? controllerAreaName = null)
+            string controllerAreaName)
         {
             IsValid = isValid;
             MethodName = methodName;

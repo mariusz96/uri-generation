@@ -11,7 +11,7 @@ namespace UriGeneration.Internal
             string methodName,
             string controllerName,
             ParameterInfo[] includedMethodParameters,
-            string? controllerAreaName = null)
+            string controllerAreaName)
         {
             return new(
                 isValid: true,
