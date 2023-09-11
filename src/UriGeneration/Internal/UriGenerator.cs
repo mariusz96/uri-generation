@@ -291,16 +291,6 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,
@@ -342,11 +332,6 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,
@@ -391,16 +376,6 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,

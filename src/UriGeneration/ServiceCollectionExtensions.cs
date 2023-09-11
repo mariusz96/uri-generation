@@ -18,6 +18,11 @@ namespace UriGeneration
             this IServiceCollection services,
             Action<MethodCacheOptions>? configure = null)
         {
+            if (services == null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
             configure ??= DefaultConfigure;
 
             services.AddOptions();
