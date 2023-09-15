@@ -21,7 +21,7 @@ namespace UriGeneration.Internal
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
         private static readonly ParameterExpression UnusedParameterExpression =
-            Expression.Parameter(typeof(object), "_unused");
+            Expression.Parameter(typeof(object), nameof(UnusedParameterExpression));
 
         private readonly IMethodCacheAccessor _methodCacheAccessor;
         private readonly ILogger<ValuesExtractor> _logger;
