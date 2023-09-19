@@ -43,7 +43,7 @@ namespace UriGeneration.IntegrationTests.WebApplicationFactories
                     endpoints.MapGet("/hi", () => "Hello!");
 
                     endpoints.MapControllerRoute(
-                        name: "AreaRouteName",
+                        name: "AreaRn",
                         pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
                     endpoints.MapDefaultControllerRoute();
