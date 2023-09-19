@@ -42,7 +42,9 @@ namespace UriGeneration.IntegrationTests
 
             string uri = await client.GetStringAsync("/AttributeRouting/Test3");
 
-            Assert.Equal("http://localhost/AnotherAttributeRouting/Action", uri);
+            Assert.Equal(
+                "http://localhost/AnotherAttributeRouting/Action",
+                uri);
         }
 
         [Fact]
@@ -141,7 +143,8 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
             client.DefaultRequestHeaders.Add("apiKey", "Test");
 
-            string uri = await client.GetStringAsync("/AttributeRouting/Test11");
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test11");
 
             Assert.Equal("http://localhost/AttributeRouting/Test11", uri);
         }
@@ -151,7 +154,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/AttributeRouting/Test12");
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test12");
 
             Assert.Equal("http://localhost/AttributeRouting/Test12", uri);
         }
@@ -234,7 +238,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/AttributeRouting/Test16");
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test16");
 
             Assert.Equal("http://localhost/AttributeRouting/Test16", uri);
         }
@@ -286,7 +291,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/AttributeRouting/Test19");
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test19");
 
             Assert.Equal("http://localhost/AttributeRouting/Test19", uri);
         }
@@ -296,7 +302,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/AttributeRouting/Test20");
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test20");
 
             Assert.Equal("http://localhost/AttributeRouting/Test20/", uri);
         }
@@ -317,7 +324,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/TemplateProvider/Test22");
+            string uri = await client.GetStringAsync(
+                "/TemplateProvider/Test22");
 
             Assert.Equal("http://localhost/TemplateProvider/Test22", uri);
         }

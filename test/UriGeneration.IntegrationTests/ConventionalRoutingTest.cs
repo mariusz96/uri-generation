@@ -27,7 +27,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/ConventionalRouting/Test1");
+            string uri = await client.GetStringAsync(
+                "/ConventionalRouting/Test1");
 
             Assert.Equal("/ConventionalRouting/Test1", uri);
         }
@@ -37,7 +38,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/ConventionalRouting/Test2");
+            string uri = await client.GetStringAsync(
+                "/ConventionalRouting/Test2");
 
             Assert.Equal("/ConventionalRouting/VoidAction", uri);
         }
@@ -47,7 +49,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/ConventionalRouting/Test3");
+            string uri = await client.GetStringAsync(
+                "/ConventionalRouting/Test3");
 
             Assert.Equal("/AnotherConventionalRouting", uri);
         }
@@ -57,7 +60,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/ConventionalRouting/Test4");
+            string uri = await client.GetStringAsync(
+                "/ConventionalRouting/Test4");
 
             Assert.Equal("/AnotherConventionalRouting/Action", uri);
         }
@@ -67,7 +71,8 @@ namespace UriGeneration.IntegrationTests
         {
             var client = _factory.CreateClient();
 
-            string uri = await client.GetStringAsync("/ConventionalRouting/Test5");
+            string uri = await client.GetStringAsync(
+                "/ConventionalRouting/Test5");
 
             Assert.Equal("/ConventionalRouting/Test5", uri);
         }
