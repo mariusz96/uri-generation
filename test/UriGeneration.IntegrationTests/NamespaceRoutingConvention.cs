@@ -26,8 +26,9 @@ namespace UriGeneration.IntegrationTests
             if (namespc == null)
                 return;
             var template = new StringBuilder();
-            template.Append(namespc, _baseNamespace.Length + 1,
-                            namespc.Length - _baseNamespace.Length - 1);
+            template.Append(
+                namespc, _baseNamespace.Length + 1,
+                namespc.Length - _baseNamespace.Length - 1);
             template.Replace('.', '/');
             template.Append("/[controller]/[action]/{id?}");
 
