@@ -248,11 +248,6 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
-            if (action == null)
-            {
-                throw new ArgumentNullException(nameof(action));
-            }
-
             if (!_valuesExtractor.TryExtractValues<TController>(
                 action,
                 out var values,
