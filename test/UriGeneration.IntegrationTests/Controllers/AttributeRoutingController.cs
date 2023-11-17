@@ -80,112 +80,120 @@ namespace UriGeneration.IntegrationTests.Controllers
                 c => c.Test7(id));
         }
 
+        [HttpGet("{id}")]
+        public string? Test8([FromRoute] int id)
+        {
+            return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
+                HttpContext,
+                c => c.Test8(id));
+        }
+
         [ActionName("ActionName")]
         [HttpGet]
-        public string? Test8()
+        public string? Test9()
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test8());
+                c => c.Test9());
         }
 
         [HttpPost]
-        public string? Test9([FromBody] TestModel model)
-        {
-            return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
-                HttpContext,
-                c => c.Test9(model));
-        }
-
-        [HttpPost]
-        public string? Test10([FromForm] TestModel model)
+        public string? Test10([FromBody] TestModel model)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
                 c => c.Test10(model));
         }
 
+        [HttpPost]
+        public string? Test11([FromForm] TestModel model)
+        {
+            return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
+                HttpContext,
+                c => c.Test11(model));
+        }
+
         [HttpGet]
-        public string? Test11([FromHeader] string apiKey)
+        public string? Test12([FromHeader] string apiKey)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test11(apiKey));
+                c => c.Test12(apiKey));
         }
 
         [HttpGet]
-        public string? Test12([FromServices] IUriGenerator uriGenerator)
+        public string? Test13([FromServices] IUriGenerator uriGenerator)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test12(uriGenerator));
+                c => c.Test13(uriGenerator));
         }
 
         [HttpPost]
-        public string? Test13(IFormFile file)
+        public string? Test14(IFormFile file)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test13(file));
+                c => c.Test14(file));
         }
 
         [HttpPost]
-        public string? Test14(IFormFileCollection files)
-        {
-            return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
-                HttpContext,
-                c => c.Test14(files));
-        }
-
-        [HttpPost]
-        public string? Test15(IEnumerable<IFormFile> files)
+        public string? Test15(IFormFileCollection files)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
                 c => c.Test15(files));
         }
 
-        [HttpGet]
-        public string? Test16(CancellationToken cancellationToken)
+        [HttpPost]
+        public string? Test16(IEnumerable<IFormFile> files)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test16(cancellationToken));
+                c => c.Test16(files));
+        }
+
+        [HttpGet]
+        public string? Test17(CancellationToken cancellationToken)
+        {
+            return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
+                HttpContext,
+                c => c.Test17(cancellationToken));
         }
 
         [HttpPost]
-        public string? Test17(IFormCollection form)
+        public string? Test18(IFormCollection form)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test17(form));
+                c => c.Test18(form));
         }
 
         [HttpGet("/EndpointName1/[action]", Name = "En1")]
         [HttpGet("/EndpointName2/[action]", Name = "En2")]
-        public string? Test18(string endpointName)
+        public string? Test19(string endpointName)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test18(endpointName),
+                c => c.Test19(endpointName),
                 endpointName);
         }
 
         [HttpGet]
-        public Task<string?> Test19Async()
+        public Task<string?> Test20Async()
         {
             return Task.FromResult(
                 _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                     HttpContext,
-                    c => c.Test19Async()));
+                    c => c.Test20Async()));
         }
 
         [HttpGet]
-        public string? Test20()
+        public string? Test21()
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test20(),
+                c => c.Test21(),
                 options: new UriOptions
                 {
                     AppendTrailingSlash = true
@@ -193,11 +201,11 @@ namespace UriGeneration.IntegrationTests.Controllers
         }
 
         [HttpGet]
-        public string? Test21(int id)
+        public string? Test22(int id)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test21(id),
+                c => c.Test22(id),
                 options: new UriOptions
                 {
                     BypassMethodCache = true,
@@ -206,11 +214,11 @@ namespace UriGeneration.IntegrationTests.Controllers
         }
 
         [TestTemplateProvider("/TemplateProvider/[action]")]
-        public string? Test22()
+        public string? Test23()
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test22());
+                c => c.Test23());
         }
     }
 }
