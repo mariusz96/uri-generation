@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
+#if NET8_0_OR_GREATER
+using Microsoft.Extensions.DependencyInjection;
+#endif
 using UriGeneration.IntegrationTests.Models;
 
 namespace UriGeneration.IntegrationTests.Controllers
@@ -129,71 +132,81 @@ namespace UriGeneration.IntegrationTests.Controllers
                 c => c.Test13(uriGenerator));
         }
 
-        [HttpPost]
-        public string? Test14(IFormFile file)
+#if NET8_0_OR_GREATER
+        [HttpGet]
+        public string? Test14([FromKeyedServices("test")] ITestService service)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test14(file));
+                c => c.Test14(service));
         }
+#endif
 
         [HttpPost]
-        public string? Test15(IFormFileCollection files)
+        public string? Test15(IFormFile file)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test15(files));
+                c => c.Test15(file));
         }
 
         [HttpPost]
-        public string? Test16(IEnumerable<IFormFile> files)
+        public string? Test16(IFormFileCollection files)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
                 c => c.Test16(files));
         }
 
-        [HttpGet]
-        public string? Test17(CancellationToken cancellationToken)
+        [HttpPost]
+        public string? Test17(IEnumerable<IFormFile> files)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test17(cancellationToken));
+                c => c.Test17(files));
+        }
+
+        [HttpGet]
+        public string? Test18(CancellationToken cancellationToken)
+        {
+            return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
+                HttpContext,
+                c => c.Test18(cancellationToken));
         }
 
         [HttpPost]
-        public string? Test18(IFormCollection form)
+        public string? Test19(IFormCollection form)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test18(form));
+                c => c.Test19(form));
         }
 
         [HttpGet("/EndpointName1/[action]", Name = "En1")]
         [HttpGet("/EndpointName2/[action]", Name = "En2")]
-        public string? Test19(string endpointName)
+        public string? Test20(string endpointName)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test19(endpointName),
+                c => c.Test20(endpointName),
                 endpointName);
         }
 
         [HttpGet]
-        public Task<string?> Test20Async()
+        public Task<string?> Test21Async()
         {
             return Task.FromResult(
                 _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                     HttpContext,
-                    c => c.Test20Async()));
+                    c => c.Test21Async()));
         }
 
         [HttpGet]
-        public string? Test21()
+        public string? Test22()
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test21(),
+                c => c.Test22(),
                 options: new UriOptions
                 {
                     AppendTrailingSlash = true
@@ -201,11 +214,11 @@ namespace UriGeneration.IntegrationTests.Controllers
         }
 
         [HttpGet]
-        public string? Test22(int id)
+        public string? Test23(int id)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test22(id),
+                c => c.Test23(id),
                 options: new UriOptions
                 {
                     BypassMethodCache = true,
@@ -214,11 +227,11 @@ namespace UriGeneration.IntegrationTests.Controllers
         }
 
         [TestTemplateProvider("/TemplateProvider/[action]")]
-        public string? Test23()
+        public string? Test24()
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test23());
+                c => c.Test24());
         }
     }
 }

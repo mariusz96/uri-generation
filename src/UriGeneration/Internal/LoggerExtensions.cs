@@ -35,7 +35,7 @@ namespace UriGeneration.Internal
         [LoggerMessage(1010, LogLevel.Debug, "Excluded method's parameter: {MethodParameterName} cannot be of Type IFormFile, IEnumerable<IFormFile>, CancellationToken or IFormCollection.", EventName = nameof(MethodParameterExcludedType))]
         public static partial void MethodParameterExcludedType(this ILogger logger, string? methodParameterName);
 
-        [LoggerMessage(1011, LogLevel.Debug, "Excluded method's parameter: {MethodParameterName} cannot have FromBody, FromForm, FromHeader or FromServices attribute specified.", EventName = nameof(MethodParameterExcludedAttribute))]
+        [LoggerMessage(1011, LogLevel.Debug, "Excluded method's parameter: {MethodParameterName} cannot have FromBody, FromForm, FromHeader, FromServices or FromKeyedServices attribute specified.", EventName = nameof(MethodParameterExcludedAttribute))]
         public static partial void MethodParameterExcludedAttribute(this ILogger logger, string? methodParameterName);
 
         [LoggerMessage(1012, LogLevel.Debug, "Successfully extracted method's name: {MethodName}.", EventName = nameof(MethodNameExtracted))]

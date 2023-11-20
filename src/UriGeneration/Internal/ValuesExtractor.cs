@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
+#if NET8_0_OR_GREATER
+using Microsoft.Extensions.DependencyInjection;
+#endif
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -257,7 +260,11 @@ namespace UriGeneration.Internal
             if (methodParameterAttributes.Any(attr => attr is FromBodyAttribute
                 || attr is FromFormAttribute
                 || attr is FromHeaderAttribute
-                || attr is FromServicesAttribute))
+                || attr is FromServicesAttribute
+#if NET8_0_OR_GREATER
+                || attr is FromKeyedServicesAttribute
+#endif
+                ))
             {
                 if (log)
                 {

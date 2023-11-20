@@ -15,6 +15,9 @@ namespace UriGeneration.IntegrationTests.WebApplicationFactories
             builder.ConfigureServices(services =>
             {
                 services.AddUriGeneration();
+#if NET8_0_OR_GREATER
+                services.AddKeyedSingleton<ITestService, TestService>("test");
+#endif
 
                 services.AddRazorPages();
                 services.AddControllersWithViews();

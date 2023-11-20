@@ -171,6 +171,19 @@ namespace UriGeneration.IntegrationTests
             Assert.Equal("http://localhost/AttributeRouting/Test13", uri);
         }
 
+#if NET8_0_OR_GREATER
+        [Fact]
+        public async Task Excludes_FromKeyedServicesParameter()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test14");
+
+            Assert.Equal("http://localhost/AttributeRouting/Test14", uri);
+        }
+#endif
+
         [Fact]
         public async Task Excludes_IFormFileParameter()
         {
@@ -185,32 +198,6 @@ namespace UriGeneration.IntegrationTests
             };
 
             var response = await client.PostAsync(
-                "/AttributeRouting/Test14",
-                content);
-            string uri = await response.Content.ReadAsStringAsync();
-
-            Assert.Equal("http://localhost/AttributeRouting/Test14", uri);
-        }
-
-        [Fact]
-        public async Task Excludes_IFormFileCollectionParameter()
-        {
-            var client = _factory.CreateClient();
-            var content = new MultipartFormDataContent
-            {
-                {
-                    new ByteArrayContent(Encoding.UTF8.GetBytes("Test1")),
-                    "files",
-                    "file1.txt"
-                },
-                {
-                    new ByteArrayContent(Encoding.UTF8.GetBytes("Test2")),
-                    "files",
-                    "file2.txt"
-                }
-            };
-
-            var response = await client.PostAsync(
                 "/AttributeRouting/Test15",
                 content);
             string uri = await response.Content.ReadAsStringAsync();
@@ -219,7 +206,7 @@ namespace UriGeneration.IntegrationTests
         }
 
         [Fact]
-        public async Task Excludes_EnumerableOfIFormFileParameter()
+        public async Task Excludes_IFormFileCollectionParameter()
         {
             var client = _factory.CreateClient();
             var content = new MultipartFormDataContent
@@ -245,14 +232,40 @@ namespace UriGeneration.IntegrationTests
         }
 
         [Fact]
+        public async Task Excludes_EnumerableOfIFormFileParameter()
+        {
+            var client = _factory.CreateClient();
+            var content = new MultipartFormDataContent
+            {
+                {
+                    new ByteArrayContent(Encoding.UTF8.GetBytes("Test1")),
+                    "files",
+                    "file1.txt"
+                },
+                {
+                    new ByteArrayContent(Encoding.UTF8.GetBytes("Test2")),
+                    "files",
+                    "file2.txt"
+                }
+            };
+
+            var response = await client.PostAsync(
+                "/AttributeRouting/Test17",
+                content);
+            string uri = await response.Content.ReadAsStringAsync();
+
+            Assert.Equal("http://localhost/AttributeRouting/Test17", uri);
+        }
+
+        [Fact]
         public async Task Excludes_CancellationTokenParameter()
         {
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test17");
+                "/AttributeRouting/Test18");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test17", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test18", uri);
         }
 
         [Fact]
@@ -272,19 +285,19 @@ namespace UriGeneration.IntegrationTests
             };
 
             var response = await client.PostAsync(
-                "/AttributeRouting/Test18",
+                "/AttributeRouting/Test19",
                 content);
             string uri = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("http://localhost/AttributeRouting/Test18", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test19", uri);
         }
 
         [InlineData(
-            "/EndpointName1/Test19?endpointName=En1",
-            "http://localhost/EndpointName1/Test19?endpointName=En1")]
+            "/EndpointName1/Test20?endpointName=En1",
+            "http://localhost/EndpointName1/Test20?endpointName=En1")]
         [InlineData(
-            "/EndpointName1/Test19?endpointName=En2",
-            "http://localhost/EndpointName2/Test19?endpointName=En2")]
+            "/EndpointName1/Test20?endpointName=En2",
+            "http://localhost/EndpointName2/Test20?endpointName=En2")]
         [Theory]
         public async Task Works_WithEndpointName(
             string requestUri,
@@ -303,9 +316,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test20");
+                "/AttributeRouting/Test21");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test20", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test21", uri);
         }
 
         [Fact]
@@ -314,9 +327,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test21");
+                "/AttributeRouting/Test22");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test21/", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test22/", uri);
         }
 
         [Fact]
@@ -325,9 +338,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test22?id=1");
+                "/AttributeRouting/Test23?id=1");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test22?id=1", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test23?id=1", uri);
         }
 
         [Fact]
@@ -336,9 +349,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/TemplateProvider/Test23");
+                "/TemplateProvider/Test24");
 
-            Assert.Equal("http://localhost/TemplateProvider/Test23", uri);
+            Assert.Equal("http://localhost/TemplateProvider/Test24", uri);
         }
     }
 }
