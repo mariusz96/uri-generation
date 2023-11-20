@@ -56,7 +56,7 @@ Extracting values from expression trees does introduce some overhead. To partial
 
 Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted controller names, action names, and route values' keys within the scope of the application lifetime.
 
-This means that, for example, on 2017 Surface Book 2 you are able to generate 100000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
+This means that, for example, on 2017 Surface Book 2 you are able to generate 200 000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
 
 ## Setup:
 - Install UriGeneration via NuGet Package Manager, Package Manager Console or dotnet CLI:
