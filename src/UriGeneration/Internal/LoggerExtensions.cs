@@ -44,7 +44,7 @@ namespace UriGeneration.Internal
         [LoggerMessage(1013, LogLevel.Debug, "{MethodName} cannot have NonActionAttribute specified.", EventName = nameof(MethodNameNotExtracted))]
         public static partial void MethodNameNotExtracted(this ILogger logger, string methodName);
 
-        [LoggerMessage(1014, LogLevel.Debug, "Succesfuly extracted controller's name: {ControllerName}.", EventName = nameof(ControllerNameExtracted))]
+        [LoggerMessage(1014, LogLevel.Debug, "Succesfully extracted controller's name: {ControllerName}.", EventName = nameof(ControllerNameExtracted))]
         public static partial void ControllerNameExtracted(this ILogger logger, string controllerName);
         
         [LoggerMessage(1015, LogLevel.Debug, "{ControllerName} cannot have NonControllerAttribute specified.", EventName = nameof(ControllerNameNotExtracted))]
