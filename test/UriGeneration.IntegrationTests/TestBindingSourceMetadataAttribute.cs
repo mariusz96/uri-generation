@@ -7,9 +7,11 @@ namespace UriGeneration.IntegrationTests
     {
         public TestBindingSourceMetadataAttribute(string bindingSource)
         {
-            BindingSource = (BindingSource)typeof(BindingSource)
-                .GetField(bindingSource)!
-                .GetValue(null)!;
+            BindingSource = bindingSource switch
+            {
+                "Query" => BindingSource.Query,
+                _ => throw new ArgumentOutOfRangeException(nameof(bindingSource))
+            };
         }
 
         public BindingSource? BindingSource { get; set; }

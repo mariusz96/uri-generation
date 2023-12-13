@@ -237,7 +237,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         }
 
         [HttpGet]
-        public string? Test25([TestBindingSourceMetadata(nameof(BindingSource.Query))] int id)
+        public string? Test25([TestBindingSourceMetadata("Query")] int id)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
