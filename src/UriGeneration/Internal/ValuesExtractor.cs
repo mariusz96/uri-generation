@@ -286,9 +286,10 @@ namespace UriGeneration.Internal
 
         private static string ExtractAreaName(ActionDescriptor actionDescriptor)
         {
-            if (actionDescriptor.RouteValues.TryGetValue(AreaKey, out string? areaName))
+            if (actionDescriptor.RouteValues.TryGetValue(AreaKey, out string? areaName)
+                && areaName is not null)
             {
-                return areaName ?? string.Empty;
+                return areaName;
             }
             else
             {
