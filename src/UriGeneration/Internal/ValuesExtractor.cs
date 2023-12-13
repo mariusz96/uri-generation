@@ -21,9 +21,6 @@ namespace UriGeneration.Internal
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
 
-        private static readonly ParameterExpression UnusedParameterExpression =
-            Expression.Parameter(typeof(object), "unused");
-
         private readonly IMethodCacheAccessor _methodCacheAccessor;
         private readonly IActionDescriptorCollectionProvider _actionDescriptorsProvider;
         private readonly ILogger<ValuesExtractor> _logger;
@@ -281,13 +278,13 @@ namespace UriGeneration.Internal
             }
             else
             {
-                // See: CachedExpressionCompiler.Evaluate.
-                Expression<Func<object?, object?>> lambdaExpression =
-                    Expression.Lambda<Func<object?, object?>>(
-                        Expression.Convert(expression, typeof(object)),
-                        UnusedParameterExpression);
+                var converted = Expression.Convert(expression, typeof(object));
+                var fakeParameter = Expression.Parameter(typeof(object), null);
+                var lambda = Expression.Lambda<Func<object?, object?>>(
+                    converted,
+                    fakeParameter);
+                var func = lambda.Compile();
 
-                var func = lambdaExpression.Compile();
                 return func(null);
             }
         }
