@@ -1,17 +1,15 @@
-﻿using Microsoft.AspNetCore.Routing;
-
-namespace UriGeneration.Internal
+﻿namespace UriGeneration.Internal
 {
     internal class Values
     {
         public string ActionName { get; }
         public string ControllerName { get; }
-        public RouteValueDictionary RouteValues { get; }
+        public ICollection<KeyValuePair<string, object?>> RouteValues { get; }
 
         public Values(
             string actionName,
             string controllerName,
-            RouteValueDictionary routeValues)
+            ICollection<KeyValuePair<string, object?>> routeValues)
         {
             ActionName = actionName;
             ControllerName = controllerName;

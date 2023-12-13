@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -217,12 +216,12 @@ namespace UriGeneration.Internal
             return true;
         }
 
-        private RouteValueDictionary ExtractRouteValues(
+        private ICollection<KeyValuePair<string, object?>> ExtractRouteValues(
             ActionDescriptor actionDescriptor,
             ReadOnlyCollection<Expression> methodCallArguments,
             UriOptions? options)
         {
-            var routeValues = new RouteValueDictionary();
+            var routeValues = new List<KeyValuePair<string, object?>>();
             var parameters = actionDescriptor.Parameters
                 .OfType<ControllerParameterDescriptor>();
 
@@ -254,12 +253,12 @@ namespace UriGeneration.Internal
                     value = EvaluateExpression(methodCallArgument, options);
                 }
 
-                routeValues.Add(key, value);
+                routeValues.Add(new KeyValuePair<string, object?>(key, value));
                 _logger.RouteValueExtracted(key, value);
             }
 
             string areaName = ExtractAreaName(actionDescriptor);
-            routeValues.Add(AreaKey, areaName);
+            routeValues.Add(new KeyValuePair<string, object?>(AreaKey, areaName));
             _logger.RouteValueExtracted(AreaKey, areaName);
 
             return routeValues;
