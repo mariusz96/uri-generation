@@ -237,11 +237,11 @@ namespace UriGeneration.IntegrationTests.Controllers
         }
 
         [HttpGet]
-        public string? Test25([TestBindingSourceMetadata("Query")] int id)
+        public string? Test25([TestBindingSourceMetadata("Header")] string apiKey)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test25(id));
+                c => c.Test25(apiKey));
         }
     }
 }

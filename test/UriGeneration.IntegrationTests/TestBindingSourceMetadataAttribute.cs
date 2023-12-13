@@ -9,7 +9,7 @@ namespace UriGeneration.IntegrationTests
         {
             BindingSource = bindingSource switch
             {
-                "Query" => BindingSource.Query,
+                "Header" => BindingSource.Header,
                 _ => throw new ArgumentOutOfRangeException(nameof(bindingSource))
             };
         }

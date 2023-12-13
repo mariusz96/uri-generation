@@ -358,11 +358,12 @@ namespace UriGeneration.IntegrationTests
         public async Task Works_WithBindingSourceMetadata()
         {
             var client = _factory.CreateClient();
+            client.DefaultRequestHeaders.Add("apiKey", "Test");
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test25?id=1");
+                "/AttributeRouting/Test25");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test25?id=1", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test25", uri);
         }
     }
 }
