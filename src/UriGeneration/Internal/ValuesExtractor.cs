@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
 #if NET8_0_OR_GREATER
@@ -17,8 +19,6 @@ namespace UriGeneration.Internal
 {
     internal class ValuesExtractor : IValuesExtractor
     {
-        private const string ControllerSuffix = "Controller";
-        private const string AsyncSuffix = "Async";
         private const string AreaKey = "area";
 
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
@@ -28,15 +28,22 @@ namespace UriGeneration.Internal
             Expression.Parameter(typeof(object), "unused");
 
         private readonly IMethodCacheAccessor _methodCacheAccessor;
+        private readonly IActionDescriptorCollectionProvider _actionDescriptorsProvider;
         private readonly ILogger<ValuesExtractor> _logger;
 
         public ValuesExtractor(
             IMethodCacheAccessor methodCacheAccessor,
+            IActionDescriptorCollectionProvider actionDescriptorsProvider,
             ILogger<ValuesExtractor> logger)
         {
             if (methodCacheAccessor == null)
             {
                 throw new ArgumentNullException(nameof(methodCacheAccessor));
+            }
+
+            if (actionDescriptorsProvider == null)
+            {
+                throw new ArgumentNullException(nameof(actionDescriptorsProvider));
             }
 
             if (logger == null)
@@ -45,6 +52,7 @@ namespace UriGeneration.Internal
             }
 
             _methodCacheAccessor = methodCacheAccessor;
+            _actionDescriptorsProvider = actionDescriptorsProvider;
             _logger = logger;
         }
 
@@ -66,31 +74,33 @@ namespace UriGeneration.Internal
                 var method = ExtractMethod(methodCall);
                 var controller = ExtractController<TController>();
 
+                var actionDescriptors = _actionDescriptorsProvider.ActionDescriptors;
+
                 var methodCache = _methodCacheAccessor.Cache;
-                var key = new MethodCacheKey(method, controller);
+                var key = new MethodCacheKey(
+                    method,
+                    controller,
+                    actionDescriptors.Version);
 
                 if (options?.BypassMethodCache is not true
                     && methodCache.TryGetValue(key, out MethodCacheEntry? entry))
                 {
                     if (entry!.IsValid)
                     {
-                        _logger.ValidCacheEntryRetrieved(
-                            entry.MethodName,
-                            entry.ControllerName,
-                            AreaKey,
-                            entry.ControllerAreaName);
+                        _logger.ValidCacheEntryRetrieved(entry.ActionDescriptor);
+
+                        var entryActionDescriptor = entry.ActionDescriptor;
 
                         var entryRouteValues = ExtractRouteValues(
-                            entry.IncludedMethodParameters,
+                            entryActionDescriptor,
                             methodCall.Arguments,
-                            entry.ControllerAreaName,
                             options);
 
                         _logger.ValuesExtracted();
 
                         values = new Values(
-                            entry.MethodName,
-                            entry.ControllerName,
+                            entryActionDescriptor.ActionName,
+                            entryActionDescriptor.ControllerName,
                             entryRouteValues);
                         return true;
                     }
@@ -102,8 +112,7 @@ namespace UriGeneration.Internal
                 }
 
                 if (!ValidateMethodConcreteness(method, controller)
-                    || !TryExtractMethodName(method, out var methodName)
-                    || !TryExtractControllerName(controller, out var controllerName))
+                    || !TryExtractActionDescriptor(method, actionDescriptors, out var actionDescriptor))
                 {
                     if (options?.BypassMethodCache is not true)
                     {
@@ -114,33 +123,22 @@ namespace UriGeneration.Internal
                     return false;
                 }
 
-                var includedMethodParameters = ExtractIncludedMethodParameters(
-                    method);
-
-                string controllerAreaName = ExtractControllerAreaName(
-                    controller);
-
                 var routeValues = ExtractRouteValues(
-                    includedMethodParameters,
+                    actionDescriptor,
                     methodCall.Arguments,
-                    controllerAreaName,
                     options);
 
                 if (options?.BypassMethodCache is not true)
                 {
-                    var validEntry = MethodCacheEntry.Valid(
-                        methodName,
-                        controllerName,
-                        includedMethodParameters,
-                        controllerAreaName);
+                    var validEntry = MethodCacheEntry.Valid(actionDescriptor);
                     methodCache.Set(key, validEntry, CacheEntryOptions);
                 }
 
                 _logger.ValuesExtracted();
 
                 values = new Values(
-                    methodName,
-                    controllerName,
+                    actionDescriptor.ActionName,
+                    actionDescriptor.ControllerName,
                     routeValues);
                 return true;
             }
@@ -209,152 +207,50 @@ namespace UriGeneration.Internal
             return true;
         }
 
-        private ParameterInfo[] ExtractIncludedMethodParameters(
-            MethodInfo method)
-        {
-            var includedMethodParameters = new List<ParameterInfo>();
-            var methodParameters = method.GetParameters();
-
-            foreach (var methodParameter in methodParameters)
-            {
-                if (IncludeMethodParameter(methodParameter, log: true))
-                {
-                    includedMethodParameters.Add(methodParameter);
-                }
-            }
-
-            return includedMethodParameters.ToArray();
-        }
-
-        private bool IncludeMethodParameter(
-            ParameterInfo methodParameter,
-            bool log)
-        {
-            if (methodParameter.Name == null)
-            {
-                if (log)
-                {
-                    _logger.MethodParameterExcludedName(
-                        methodParameter.Position);
-                }
-                return false;
-            }
-
-            var methodParameterType = methodParameter.ParameterType;
-
-            if (methodParameterType.IsAssignableTo(typeof(IFormFile))
-                || methodParameterType.IsAssignableTo(typeof(IEnumerable<IFormFile>))
-                || methodParameterType.IsAssignableTo(typeof(CancellationToken))
-                || methodParameterType.IsAssignableTo(typeof(IFormCollection)))
-            {
-                if (log)
-                {
-                    _logger.MethodParameterExcludedType(methodParameter.Name);
-                }
-                return false;
-            }
-
-            var methodParameterAttributes = methodParameter
-                .GetCustomAttributes(inherit: true);
-
-            if (methodParameterAttributes.Any(attr => attr is FromBodyAttribute
-                || attr is FromFormAttribute
-                || attr is FromHeaderAttribute
-                || attr is FromServicesAttribute
-#if NET8_0_OR_GREATER
-                || attr is FromKeyedServicesAttribute
-#endif
-                ))
-            {
-                if (log)
-                {
-                    _logger.MethodParameterExcludedAttribute(
-                        methodParameter.Name);
-                }
-                return false;
-            }
-
-            return true;
-        }
-
-        private bool TryExtractMethodName(
+        private bool TryExtractActionDescriptor(
             MethodInfo method,
-            [NotNullWhen(true)] out string? methodName)
+            ActionDescriptorCollection actionDescriptors,
+            [NotNullWhen(true)] out ControllerActionDescriptor? actionDescriptor)
         {
-            methodName = method.Name;
+            actionDescriptor = actionDescriptors.Items
+                .OfType<ControllerActionDescriptor>()
+                .FirstOrDefault(descriptor => descriptor.MethodInfo == method);
 
-            if (method.IsDefined(typeof(NonActionAttribute), inherit: true))
+            if (actionDescriptor is null)
             {
-                _logger.MethodNameNotExtracted(methodName);
+                _logger.NoActionDescriptorFound(method);
                 return false;
             }
 
-            methodName = methodName.RemoveSuffix(AsyncSuffix);
-
-            var actionNameAttribute = method
-                .GetCustomAttributes<ActionNameAttribute>(inherit: true)
-                .FirstOrDefault();
-
-            if (actionNameAttribute != null)
-            {
-                methodName = actionNameAttribute.Name;
-            }
-
-            _logger.MethodNameExtracted(methodName);
+            _logger.ActionDescriptorExtracted();
             return true;
-        }
-
-        private bool TryExtractControllerName(
-            Type controller,
-            [NotNullWhen(true)] out string? controllerName)
-        {
-            controllerName = controller.Name;
-
-            if (controller.IsDefined(
-                    typeof(NonControllerAttribute),
-                    inherit: true))
-            {
-                _logger.ControllerNameNotExtracted(controllerName);
-                return false;
-            }
-
-            controllerName = controllerName.RemoveSuffix(ControllerSuffix);
-
-            _logger.ControllerNameExtracted(controllerName);
-            return true;
-        }
-
-        private string ExtractControllerAreaName(Type controller)
-        {
-            var areaAttribute = controller
-                .GetCustomAttributes<AreaAttribute>(inherit: true)
-                .FirstOrDefault();
-
-            if (areaAttribute != null)
-            {
-                string controllerAreaName = areaAttribute.RouteValue;
-                _logger.RouteValueExtracted(AreaKey, controllerAreaName);
-                return controllerAreaName;
-            }
-
-            return string.Empty; // don't use the 'ambient' value of area
         }
 
         private RouteValueDictionary ExtractRouteValues(
-            ParameterInfo[] includedMethodParameters,
+            ActionDescriptor actionDescriptor,
             ReadOnlyCollection<Expression> methodCallArguments,
-            string controllerAreaName,
             UriOptions? options)
         {
             var routeValues = new RouteValueDictionary();
+            var parameters = actionDescriptor.Parameters
+                .OfType<ControllerParameterDescriptor>();
 
-            foreach (var includedMethodParameter in includedMethodParameters)
+            foreach (var parameter in parameters)
             {
-                // nullability validated in: IncludeMethodParameter
-                string key = includedMethodParameter.Name!;
+                var bindingSource = parameter.BindingInfo?.BindingSource;
+
+                if (bindingSource is not null // Might be null in controllers with views.
+                    && !bindingSource.CanAcceptDataFrom(BindingSource.Query)
+                    && !bindingSource.CanAcceptDataFrom(BindingSource.Path))
+                {
+                    _logger.BindingSource(bindingSource?.Id);
+                    continue;
+                }
+
+                string key = parameter.Name;
 
                 var methodCallArgument = methodCallArguments[
-                    includedMethodParameter.Position];
+                    parameter.ParameterInfo.Position];
 
                 object? value;
 
@@ -371,8 +267,9 @@ namespace UriGeneration.Internal
                 _logger.RouteValueExtracted(key, value);
             }
 
-            routeValues.Add(AreaKey, controllerAreaName);
-            // logged in: ExtractControllerAreaName
+            string areaName = ExtractAreaName(actionDescriptor);
+            routeValues.Add(AreaKey, areaName);
+            _logger.RouteValueExtracted(AreaKey, areaName);
 
             return routeValues;
         }
@@ -387,7 +284,7 @@ namespace UriGeneration.Internal
             }
             else
             {
-                // see: CachedExpressionCompiler.Evaluate
+                // See: CachedExpressionCompiler.Evaluate.
                 Expression<Func<object?, object?>> lambdaExpression =
                     Expression.Lambda<Func<object?, object?>>(
                         Expression.Convert(expression, typeof(object)),
@@ -395,6 +292,18 @@ namespace UriGeneration.Internal
 
                 var func = lambdaExpression.Compile();
                 return func(null);
+            }
+        }
+
+        private static string ExtractAreaName(ActionDescriptor actionDescriptor)
+        {
+            if (actionDescriptor.RouteValues.TryGetValue(AreaKey, out string? areaName))
+            {
+                return areaName ?? string.Empty;
+            }
+            else
+            {
+                return string.Empty; // Don't use the 'ambient' value of area.
             }
         }
     }

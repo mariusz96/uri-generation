@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc.Controllers;
 
 namespace UriGeneration.Internal
 {
@@ -8,18 +8,8 @@ namespace UriGeneration.Internal
             new(isValid: false);
 
         public static MethodCacheEntry Valid(
-            string methodName,
-            string controllerName,
-            ParameterInfo[] includedMethodParameters,
-            string controllerAreaName)
-        {
-            return new(
-                isValid: true,
-                methodName,
-                controllerName,
-                includedMethodParameters,
-                controllerAreaName);
-        }
+            ControllerActionDescriptor actionDescriptor) =>
+            new(isValid: true, actionDescriptor);
 
         public static MethodCacheEntry Invalid() => InvalidInstance;
     }
