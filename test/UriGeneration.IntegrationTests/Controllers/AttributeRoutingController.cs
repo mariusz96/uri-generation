@@ -209,7 +209,10 @@ namespace UriGeneration.IntegrationTests.Controllers
                 c => c.Test22(),
                 options: new UriOptions
                 {
-                    AppendTrailingSlash = true
+                    LinkOptions = new LinkOptions
+                    {
+                        AppendTrailingSlash = true
+                    }
                 });
         }
 

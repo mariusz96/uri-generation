@@ -263,7 +263,7 @@ namespace UriGeneration.Internal
                     values: values.RouteValues,
                     pathBase: pathBase,
                     fragment: fragment,
-                    options: options);
+                    options: options?.LinkOptions);
             }
             else
             {
@@ -273,7 +273,7 @@ namespace UriGeneration.Internal
                     values: values.RouteValues,
                     pathBase: pathBase,
                     fragment: fragment,
-                    options: options);
+                    options: options?.LinkOptions);
             }
         }
 
@@ -302,7 +302,7 @@ namespace UriGeneration.Internal
                     values: values.RouteValues,
                     pathBase: pathBase,
                     fragment: fragment,
-                    options: options);
+                    options: options?.LinkOptions);
             }
             else
             {
@@ -313,7 +313,7 @@ namespace UriGeneration.Internal
                     values: values.RouteValues,
                     pathBase: pathBase,
                     fragment: fragment,
-                    options: options);
+                    options: options?.LinkOptions);
             }
         }
 
@@ -344,7 +344,7 @@ namespace UriGeneration.Internal
                     host: host,
                     pathBase: pathBase,
                     fragment: fragment,
-                    options: options);
+                    options: options?.LinkOptions);
             }
             else
             {
@@ -356,7 +356,7 @@ namespace UriGeneration.Internal
                      host: host,
                      pathBase: pathBase,
                      fragment: fragment,
-                     options: options);
+                     options: options?.LinkOptions);
             }
         }
 
@@ -389,7 +389,7 @@ namespace UriGeneration.Internal
                     host: host,
                     pathBase: pathBase,
                     fragment: fragment,
-                    options: options);
+                    options: options?.LinkOptions);
             }
             else
             {
@@ -402,7 +402,7 @@ namespace UriGeneration.Internal
                      host: host,
                      pathBase: pathBase,
                      fragment: fragment,
-                     options: options);
+                     options: options?.LinkOptions);
             }
         }
     }
