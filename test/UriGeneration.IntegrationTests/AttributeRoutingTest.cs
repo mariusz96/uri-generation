@@ -353,5 +353,16 @@ namespace UriGeneration.IntegrationTests
 
             Assert.Equal("http://localhost/TemplateProvider/Test24", uri);
         }
+
+        [Fact]
+        public async Task Works_WithBindingSourceMetadata()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test25?id=1");
+
+            Assert.Equal("http://localhost/AttributeRouting/Test25?id=1", uri);
+        }
     }
 }

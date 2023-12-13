@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using UriGeneration.IntegrationTests.Models;
 
@@ -226,12 +227,21 @@ namespace UriGeneration.IntegrationTests.Controllers
                 });
         }
 
+        [HttpGet]
         [TestTemplateProvider("/TemplateProvider/[action]")]
         public string? Test24()
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
                 c => c.Test24());
+        }
+
+        [HttpGet]
+        public string? Test25([TestBindingSourceMetadata(nameof(BindingSource.Query))] int id)
+        {
+            return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
+                HttpContext,
+                c => c.Test25(id));
         }
     }
 }
