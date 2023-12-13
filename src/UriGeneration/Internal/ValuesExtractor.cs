@@ -54,7 +54,7 @@ namespace UriGeneration.Internal
         }
 
         public bool TryExtractValues<TController>(
-            LambdaExpression action,
+            LambdaExpression expression,
             [NotNullWhen(true)] out Values? values,
             UriOptions? options = null)
                 where TController : class
@@ -63,7 +63,7 @@ namespace UriGeneration.Internal
             {
                 values = default;
 
-                if (!TryExtractMethodCall(action.Body, out var methodCall))
+                if (!TryExtractMethodCall(expression.Body, out var methodCall))
                 {
                     return false;
                 }
@@ -141,7 +141,7 @@ namespace UriGeneration.Internal
             }
             catch (Exception exception)
             {
-                _logger.ValuesNotExtracted(action, exception);
+                _logger.ValuesNotExtracted(expression, exception);
 
                 values = default;
                 return false;
@@ -149,14 +149,14 @@ namespace UriGeneration.Internal
         }
 
         private bool TryExtractMethodCall(
-            Expression actionBody,
+            Expression expressionBody,
             [NotNullWhen(true)] out MethodCallExpression? methodCall)
         {
-            methodCall = actionBody as MethodCallExpression;
+            methodCall = expressionBody as MethodCallExpression;
 
             if (methodCall == null)
             {
-                _logger.MethodCallNotExtracted(actionBody);
+                _logger.MethodCallNotExtracted(expressionBody);
                 return false;
             }
 
