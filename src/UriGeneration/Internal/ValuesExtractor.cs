@@ -18,6 +18,9 @@ namespace UriGeneration.Internal
     {
         private const string AreaKey = "area";
 
+        private static readonly ParameterExpression FakeParameter =
+            Expression.Parameter(typeof(object), null);
+
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
 
@@ -279,10 +282,9 @@ namespace UriGeneration.Internal
             else
             {
                 var converted = Expression.Convert(expression, typeof(object));
-                var fakeParameter = Expression.Parameter(typeof(object), null);
                 var lambda = Expression.Lambda<Func<object?, object?>>(
                     converted,
-                    fakeParameter);
+                    FakeParameter);
                 var func = lambda.Compile();
 
                 return func(null);
