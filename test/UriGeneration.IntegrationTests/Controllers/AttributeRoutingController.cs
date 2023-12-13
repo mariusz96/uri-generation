@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
-#if NET8_0_OR_GREATER
-using Microsoft.Extensions.DependencyInjection;
-#endif
 using UriGeneration.IntegrationTests.Models;
 
 namespace UriGeneration.IntegrationTests.Controllers
@@ -134,7 +131,7 @@ namespace UriGeneration.IntegrationTests.Controllers
 
 #if NET8_0_OR_GREATER
         [HttpGet]
-        public string? Test14([FromKeyedServices("test")] ITestService service)
+        public string? Test14([Microsoft.Extensions.DependencyInjection.FromKeyedServices("test")] ITestService service)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
