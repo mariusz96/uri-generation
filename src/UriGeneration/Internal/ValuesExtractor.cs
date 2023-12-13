@@ -154,12 +154,6 @@ namespace UriGeneration.Internal
         {
             methodCall = actionBody as MethodCallExpression;
 
-            if (methodCall == null
-                && actionBody is UnaryExpression objectCast)
-            {
-                methodCall = objectCast.Operand as MethodCallExpression;
-            }
-
             if (methodCall == null)
             {
                 _logger.MethodCallNotExtracted(actionBody);
