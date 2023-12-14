@@ -19,7 +19,6 @@ namespace UriGeneration.Internal
 
         private static readonly ParameterExpression FakeParameter =
             Expression.Parameter(typeof(object), null);
-
         private static readonly MemoryCacheEntryOptions CacheEntryOptions =
             new() { Size = 1 };
 
@@ -85,19 +84,17 @@ namespace UriGeneration.Internal
                     {
                         _logger.ValidCacheEntryRetrieved(entry.ActionDescriptor);
 
-                        var entryActionDescriptor = entry.ActionDescriptor;
-
                         var entryRouteValues = ExtractRouteValues(
-                            entryActionDescriptor,
+                            entry.ActionDescriptor,
                             methodCall.Arguments,
                             options);
 
-                        _logger.ValuesExtracted();
-
                         values = new Values(
-                            entryActionDescriptor.ActionName,
-                            entryActionDescriptor.ControllerName,
+                            entry.ActionDescriptor.ActionName,
+                            entry.ActionDescriptor.ControllerName,
                             entryRouteValues);
+
+                        _logger.ValuesExtracted();
                         return true;
                     }
                     else
@@ -108,7 +105,7 @@ namespace UriGeneration.Internal
                 }
 
                 if (!ValidateMethodConcreteness(method, controller)
-                    || !TryExtractActionDescriptor(method, actionDescriptors, out var actionDescriptor))
+                    || !TryExtractActionDescriptor(method, actionDescriptors, out var descriptor))
                 {
                     if (options?.BypassMethodCache is not true)
                     {
@@ -120,29 +117,29 @@ namespace UriGeneration.Internal
                 }
 
                 var routeValues = ExtractRouteValues(
-                    actionDescriptor,
+                    descriptor,
                     methodCall.Arguments,
                     options);
 
                 if (options?.BypassMethodCache is not true)
                 {
-                    var validEntry = MethodCacheEntry.Valid(actionDescriptor);
+                    var validEntry = MethodCacheEntry.Valid(descriptor);
                     methodCache.Set(key, validEntry, CacheEntryOptions);
                 }
 
-                _logger.ValuesExtracted();
-
                 values = new Values(
-                    actionDescriptor.ActionName,
-                    actionDescriptor.ControllerName,
+                    descriptor.ActionName,
+                    descriptor.ControllerName,
                     routeValues);
+
+                _logger.ValuesExtracted();
                 return true;
             }
             catch (Exception exception)
             {
-                _logger.ValuesNotExtracted(expression, exception);
-
                 values = default;
+
+                _logger.ValuesNotExtracted(expression, exception);
                 return false;
             }
         }
@@ -166,6 +163,7 @@ namespace UriGeneration.Internal
         private MethodInfo ExtractMethod(MethodCallExpression methodCall)
         {
             var method = methodCall.Method;
+
             _logger.MethodExtracted();
             return method;
         }
@@ -174,6 +172,7 @@ namespace UriGeneration.Internal
             where TController : class
         {
             var controller = typeof(TController);
+
             _logger.ControllerExtracted();
             return controller;
         }
@@ -229,35 +228,36 @@ namespace UriGeneration.Internal
             {
                 var bindingSource = parameter.BindingInfo?.BindingSource;
 
-                if (bindingSource is not null // Might be null in apps that don't use InferParameterBindingInfoConvention.
-                    && !bindingSource.CanAcceptDataFrom(BindingSource.Query)
-                    && !bindingSource.CanAcceptDataFrom(BindingSource.Path))
+                if (bindingSource is null // Might be null in apps that don't use InferParameterBindingInfoConvention.
+                    || bindingSource.CanAcceptDataFrom(BindingSource.Query)
+                    || bindingSource.CanAcceptDataFrom(BindingSource.Path))
                 {
-                    _logger.BindingSource(bindingSource?.Id);
-                    continue;
-                }
+                    string key = parameter.Name;
+                    var methodCallArgument = methodCallArguments[
+                        parameter.ParameterInfo.Position];
 
-                string key = parameter.Name;
+                    object? value;
 
-                var methodCallArgument = methodCallArguments[
-                    parameter.ParameterInfo.Position];
+                    if (methodCallArgument is ConstantExpression ce)
+                    {
+                        value = ce.Value;
+                    }
+                    else
+                    {
+                        value = EvaluateExpression(methodCallArgument, options);
+                    }
 
-                object? value;
-
-                if (methodCallArgument is ConstantExpression ce)
-                {
-                    value = ce.Value;
+                    routeValues.Add(new KeyValuePair<string, object?>(key, value));
+                    _logger.RouteValueExtracted(key, value);
                 }
                 else
                 {
-                    value = EvaluateExpression(methodCallArgument, options);
+                    _logger.BindingSource(bindingSource?.Id);
                 }
-
-                routeValues.Add(new KeyValuePair<string, object?>(key, value));
-                _logger.RouteValueExtracted(key, value);
             }
 
             string areaName = ExtractAreaName(actionDescriptor);
+
             routeValues.Add(new KeyValuePair<string, object?>(AreaKey, areaName));
             _logger.RouteValueExtracted(AreaKey, areaName);
 
