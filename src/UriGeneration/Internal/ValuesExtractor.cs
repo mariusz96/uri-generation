@@ -229,7 +229,7 @@ namespace UriGeneration.Internal
             {
                 var bindingSource = parameter.BindingInfo?.BindingSource;
 
-                if (bindingSource is not null // Might be null in controllers with views.
+                if (bindingSource is not null // Might be null in apps that don't use InferParameterBindingInfoConvention.
                     && !bindingSource.CanAcceptDataFrom(BindingSource.Query)
                     && !bindingSource.CanAcceptDataFrom(BindingSource.Path))
                 {
