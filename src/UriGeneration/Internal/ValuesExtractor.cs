@@ -205,7 +205,7 @@ namespace UriGeneration.Internal
                 .OfType<ControllerActionDescriptor>()
                 .FirstOrDefault(descriptor => descriptor.MethodInfo == method);
 
-            if (actionDescriptor is null)
+            if (actionDescriptor == null)
             {
                 _logger.NoActionDescriptorFound(method);
                 return false;
@@ -228,7 +228,7 @@ namespace UriGeneration.Internal
             {
                 var bindingSource = parameter.BindingInfo?.BindingSource;
 
-                if (bindingSource is null // Might be null in apps that don't use InferParameterBindingInfoConvention.
+                if (bindingSource == null // Might be null in apps that don't use InferParameterBindingInfoConvention.
                     || bindingSource.CanAcceptDataFrom(BindingSource.Query)
                     || bindingSource.CanAcceptDataFrom(BindingSource.Path))
                 {
@@ -287,7 +287,7 @@ namespace UriGeneration.Internal
         private static string ExtractAreaName(ActionDescriptor actionDescriptor)
         {
             if (actionDescriptor.RouteValues.TryGetValue(AreaKey, out string? areaName)
-                && areaName is not null)
+                && areaName != null)
             {
                 return areaName;
             }
