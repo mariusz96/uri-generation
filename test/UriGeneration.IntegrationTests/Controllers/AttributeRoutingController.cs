@@ -236,7 +236,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         }
 
         [HttpGet]
-        public string? Test25([TestBindingSourceMetadata("Header")] string apiKey)
+        public string? Test25([TestBindingSource("Header")] string apiKey)
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
