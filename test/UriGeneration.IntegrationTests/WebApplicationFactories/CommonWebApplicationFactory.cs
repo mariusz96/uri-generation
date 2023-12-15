@@ -5,7 +5,10 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+
+#if NET8_0_OR_GREATER
 using UriGeneration.IntegrationTests.Services;
+#endif
 
 namespace UriGeneration.IntegrationTests.WebApplicationFactories
 {
@@ -15,10 +18,11 @@ namespace UriGeneration.IntegrationTests.WebApplicationFactories
         {
             builder.ConfigureServices(services =>
             {
-                services.AddUriGeneration();
 #if NET8_0_OR_GREATER
                 services.AddKeyedSingleton<ITestService, TestService>("test");
 #endif
+
+                services.AddUriGeneration();
 
                 services.AddRazorPages();
                 services.AddControllersWithViews();
