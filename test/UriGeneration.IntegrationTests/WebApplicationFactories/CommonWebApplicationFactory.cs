@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using UriGeneration.IntegrationTests.Services;
 
 namespace UriGeneration.IntegrationTests.WebApplicationFactories
 {

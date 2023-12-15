@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using UriGeneration.IntegrationTests.Models;
+using UriGeneration.IntegrationTests.Services;
 
 namespace UriGeneration.IntegrationTests.Controllers
 {
