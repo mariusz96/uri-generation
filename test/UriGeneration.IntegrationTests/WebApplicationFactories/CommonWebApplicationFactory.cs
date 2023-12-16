@@ -52,20 +52,20 @@ namespace UriGeneration.IntegrationTests.WebApplicationFactories
 
                     endpoints.MapControllerRoute(
                         name: "Rn1",
-                        pattern: "RouteName1/Test6",
+                        pattern: "RouteName1/Test8",
                         defaults: new
                         {
                             controller = "ConventionalRouting",
-                            action = "Test6"
+                            action = "Test8"
                         });
 
                     endpoints.MapControllerRoute(
                         name: "Rn2",
-                        pattern: "RouteName2/Test6",
+                        pattern: "RouteName2/Test8",
                         defaults: new
                         {
                             controller = "ConventionalRouting",
-                            action = "Test6"
+                            action = "Test8"
                         });
 
                     endpoints.MapDefaultControllerRoute();

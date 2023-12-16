@@ -77,12 +77,34 @@ namespace UriGeneration.IntegrationTests
             Assert.Equal("/ConventionalRouting/Test5", uri);
         }
 
+        [Fact]
+        public async Task Works_WithParameter()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/ConventionalRouting/Test6?value=1");
+
+            Assert.Equal("/ConventionalRouting/Test6?value=1", uri);
+        }
+
+        [Fact]
+        public async Task Works_WithCollectionParameter()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/ConventionalRouting/Test7?values=1&values=2");
+
+            Assert.Equal("/ConventionalRouting/Test7?values=1&values=2", uri);
+        }
+
         [InlineData(
-            "/RouteName1/Test6?routeName=Rn1",
-            "http://localhost/RouteName1/Test6?routeName=Rn1")]
+            "/RouteName1/Test8?routeName=Rn1",
+            "/RouteName1/Test8?routeName=Rn1")]
         [InlineData(
-            "/RouteName1/Test6?routeName=Rn2",
-            "http://localhost/RouteName2/Test6?routeName=Rn2")]
+            "/RouteName1/Test8?routeName=Rn2",
+            "/RouteName2/Test8?routeName=Rn2")]
         [Theory]
         public async Task Works_WithDedicatedConventionalRoute(
             string requestUri,

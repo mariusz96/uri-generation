@@ -24,11 +24,13 @@ namespace UriGeneration.Internal
 
         private readonly IMethodCacheAccessor _methodCacheAccessor;
         private readonly IActionDescriptorCollectionProvider _actionDescriptorsProvider;
+        private readonly IModelMetadataProvider _modelMetadataProvider;
         private readonly ILogger<ValuesExtractor> _logger;
 
         public ValuesExtractor(
             IMethodCacheAccessor methodCacheAccessor,
             IActionDescriptorCollectionProvider actionDescriptorsProvider,
+            IModelMetadataProvider modelMetadataProvider,
             ILogger<ValuesExtractor> logger)
         {
             if (methodCacheAccessor == null)
@@ -41,6 +43,11 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(actionDescriptorsProvider));
             }
 
+            if (modelMetadataProvider == null)
+            {
+                throw new ArgumentNullException(nameof(modelMetadataProvider));
+            }
+
             if (logger == null)
             {
                 throw new ArgumentNullException(nameof(logger));
@@ -48,6 +55,7 @@ namespace UriGeneration.Internal
 
             _methodCacheAccessor = methodCacheAccessor;
             _actionDescriptorsProvider = actionDescriptorsProvider;
+            _modelMetadataProvider = modelMetadataProvider;
             _logger = logger;
         }
 
@@ -226,13 +234,38 @@ namespace UriGeneration.Internal
 
             foreach (var parameter in parameters)
             {
-                var bindingSource = parameter.BindingInfo?.BindingSource;
+                ModelMetadata metadata;
+                if (_modelMetadataProvider is ModelMetadataProvider modelMetadataProviderBase)
+                {
+                    // The default model metadata provider derives from ModelMetadataProvider
+                    // and can therefore supply information about attributes applied to parameters.
+                    metadata = modelMetadataProviderBase.GetMetadataForParameter(parameter.ParameterInfo);
+                }
+                else
+                {
+                    // For backward compatibility, if there's a custom model metadata provider that
+                    // only implements the older IModelMetadataProvider interface, access the more
+                    // limited metadata information it supplies. In this scenario, validation attributes
+                    // are not supported on parameters.
+                    metadata = _modelMetadataProvider.GetMetadataForType(parameter.ParameterType);
+                }
+
+                var bindingInfo = parameter.BindingInfo ?? new BindingInfo();
+                bindingInfo.TryApplyBindingInfo(metadata);
+
+                if (!metadata.IsBindingAllowed)
+                {
+                    _logger.BindingNotAllowed(parameter.Name);
+                    continue;
+                }
+
+                string key = bindingInfo.BinderModelName ?? metadata.BinderModelName ?? parameter.Name;
+                var bindingSource = bindingInfo.BindingSource ?? metadata.BindingSource;
 
                 if (bindingSource == null // Might be null in apps that don't use InferParameterBindingInfoConvention.
                     || bindingSource.CanAcceptDataFrom(BindingSource.Query)
                     || bindingSource.CanAcceptDataFrom(BindingSource.Path))
                 {
-                    string key = parameter.Name;
                     var methodCallArgument = methodCallArguments[
                         parameter.ParameterInfo.Position];
 
@@ -252,7 +285,8 @@ namespace UriGeneration.Internal
                 }
                 else
                 {
-                    _logger.BindingSource(bindingSource?.Id);
+                    _logger.DisallowedBindingSource(parameter.Name, bindingSource?.Id);
+                    continue;
                 }
             }
 

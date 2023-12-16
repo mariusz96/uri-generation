@@ -63,9 +63,22 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test5?id=1");
+                "/AttributeRouting/Test5?value=1");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test5?id=1", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test5?value=1", uri);
+        }
+
+        [Fact]
+        public async Task Works_WithCollectionParameter()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test6?values=1&values=2");
+
+            Assert.Equal(
+                "http://localhost/AttributeRouting/Test6?values=1&values=2",
+                uri);
         }
 
         [Fact]
@@ -74,9 +87,20 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test6?id=1");
+                "/AttributeRouting/Test7?value=1");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test6?id=1", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test7?value=1", uri);
+        }
+
+        [Fact]
+        public async Task Works_WithFromQueryParameterWithModelName()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test8?value2=1");
+
+            Assert.Equal("http://localhost/AttributeRouting/Test8?value2=1", uri);
         }
 
         [Fact]
@@ -85,9 +109,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test7/1");
+                "/AttributeRouting/Test9/1");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test7/1", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test9/1", uri);
         }
 
         [Fact]
@@ -96,9 +120,20 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test8/1");
+                "/AttributeRouting/Test10/1");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test8/1", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test10/1", uri);
+        }
+
+        [Fact]
+        public async Task Works_WithFromRouteParameterWithModelName()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test11/1");
+
+            Assert.Equal("http://localhost/AttributeRouting/Test11/1", uri);
         }
 
         [Fact]
@@ -118,16 +153,15 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
             var model = new TestModel
             {
-                Id = 1,
-                Name = "Test"
+                Value = "Test"
             };
 
             var response = await client.PostAsJsonAsync(
-                "/AttributeRouting/Test10",
+                "/AttributeRouting/Test13",
                 model);
             string uri = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("http://localhost/AttributeRouting/Test10", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test13", uri);
         }
 
         [Fact]
@@ -136,28 +170,27 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
             var model = new Dictionary<string, string>
             {
-                { "Id", "1" },
-                { "Name", "Test" }
+                { "Value", "Test" }
             };
 
             var response = await client.PostAsync(
-                "/AttributeRouting/Test11",
+                "/AttributeRouting/Test14",
                 new FormUrlEncodedContent(model));
             string uri = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("http://localhost/AttributeRouting/Test11", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test14", uri);
         }
 
         [Fact]
         public async Task Excludes_FromHeaderParameter()
         {
             var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Add("apiKey", "Test");
+            client.DefaultRequestHeaders.Add("value", "Test");
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test12");
+                "/AttributeRouting/Test15");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test12", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test15", uri);
         }
 
         [Fact]
@@ -166,9 +199,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test13");
+                "/AttributeRouting/Test16");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test13", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test16", uri);
         }
 
 #if NET8_0_OR_GREATER
@@ -178,9 +211,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test14");
+                "/AttributeRouting/Test17");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test14", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test17", uri);
         }
 #endif
 
@@ -198,11 +231,11 @@ namespace UriGeneration.IntegrationTests
             };
 
             var response = await client.PostAsync(
-                "/AttributeRouting/Test15",
+                "/AttributeRouting/Test18",
                 content);
             string uri = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("http://localhost/AttributeRouting/Test15", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test18", uri);
         }
 
         [Fact]
@@ -224,11 +257,11 @@ namespace UriGeneration.IntegrationTests
             };
 
             var response = await client.PostAsync(
-                "/AttributeRouting/Test16",
+                "/AttributeRouting/Test19",
                 content);
             string uri = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("http://localhost/AttributeRouting/Test16", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test19", uri);
         }
 
         [Fact]
@@ -250,11 +283,11 @@ namespace UriGeneration.IntegrationTests
             };
 
             var response = await client.PostAsync(
-                "/AttributeRouting/Test17",
+                "/AttributeRouting/Test20",
                 content);
             string uri = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("http://localhost/AttributeRouting/Test17", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test20", uri);
         }
 
         [Fact]
@@ -263,9 +296,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test18");
+                "/AttributeRouting/Test21");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test18", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test21", uri);
         }
 
         [Fact]
@@ -275,29 +308,25 @@ namespace UriGeneration.IntegrationTests
             var content = new MultipartFormDataContent
             {
                 {
-                    new StringContent("1"),
-                    "Id"
-                },
-                {
                     new StringContent("Test"),
-                    "Name"
+                    "Value"
                 }
             };
 
             var response = await client.PostAsync(
-                "/AttributeRouting/Test19",
+                "/AttributeRouting/Test22",
                 content);
             string uri = await response.Content.ReadAsStringAsync();
 
-            Assert.Equal("http://localhost/AttributeRouting/Test19", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test22", uri);
         }
 
         [InlineData(
-            "/EndpointName1/Test20?endpointName=En1",
-            "http://localhost/EndpointName1/Test20?endpointName=En1")]
+            "/EndpointName1/Test23?endpointName=En1",
+            "http://localhost/EndpointName1/Test23?endpointName=En1")]
         [InlineData(
-            "/EndpointName1/Test20?endpointName=En2",
-            "http://localhost/EndpointName2/Test20?endpointName=En2")]
+            "/EndpointName1/Test23?endpointName=En2",
+            "http://localhost/EndpointName2/Test23?endpointName=En2")]
         [Theory]
         public async Task Works_WithEndpointName(
             string requestUri,
@@ -316,9 +345,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test21");
+                "/AttributeRouting/Test24");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test21", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test24", uri);
         }
 
         [Fact]
@@ -327,9 +356,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test22");
+                "/AttributeRouting/Test25");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test22/", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test25/", uri);
         }
 
         [Fact]
@@ -338,9 +367,9 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test23?id=1");
+                "/AttributeRouting/Test26?value=1");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test23?id=1", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test26?value=1", uri);
         }
 
         [Fact]
@@ -349,21 +378,32 @@ namespace UriGeneration.IntegrationTests
             var client = _factory.CreateClient();
 
             string uri = await client.GetStringAsync(
-                "/TemplateProvider/Test24");
+                "/TemplateProvider/Test27");
 
-            Assert.Equal("http://localhost/TemplateProvider/Test24", uri);
+            Assert.Equal("http://localhost/TemplateProvider/Test27", uri);
         }
 
         [Fact]
         public async Task Works_WithBindingSourceMetadata()
         {
             var client = _factory.CreateClient();
-            client.DefaultRequestHeaders.Add("apiKey", "Test");
+            client.DefaultRequestHeaders.Add("value", "Test");
 
             string uri = await client.GetStringAsync(
-                "/AttributeRouting/Test25");
+                "/AttributeRouting/Test28");
 
-            Assert.Equal("http://localhost/AttributeRouting/Test25", uri);
+            Assert.Equal("http://localhost/AttributeRouting/Test28", uri);
+        }
+
+        [Fact]
+        public async Task Works_WithModelNameProvider()
+        {
+            var client = _factory.CreateClient();
+
+            string uri = await client.GetStringAsync(
+                "/AttributeRouting/Test29?value2=1");
+
+            Assert.Equal("http://localhost/AttributeRouting/Test29?value2=1", uri);
         }
     }
 }

@@ -62,12 +62,28 @@ namespace UriGeneration.IntegrationTests.Controllers
                     c => c.Test5());
         }
 
-        public string? Test6(string routeName)
+        public string? Test6(int value)
         {
             return _uriGenerator
-                .GetUriByExpression<ConventionalRoutingController>(
+                .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.Test6(routeName),
+                    c => c.Test6(value));
+        }
+
+        public string? Test7(int[] values)
+        {
+            return _uriGenerator
+                .GetPathByExpression<ConventionalRoutingController>(
+                    HttpContext,
+                    c => c.Test7(values));
+        }
+
+        public string? Test8(string routeName)
+        {
+            return _uriGenerator
+                .GetPathByExpression<ConventionalRoutingController>(
+                    HttpContext,
+                    c => c.Test8(routeName),
                     routeName);
         }
     }
