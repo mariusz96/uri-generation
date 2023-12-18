@@ -8,14 +8,14 @@ namespace UriGeneration.Internal
     {
         public IMemoryCache Cache { get; }
 
-        public MethodCacheAccessor(IOptions<UriGenerationOptions> optionsAccessor)
+        public MethodCacheAccessor(IOptions<UriGenerationOptions> globalOptions)
         {
-            if (optionsAccessor == null)
+            if (globalOptions == null)
             {
-                throw new ArgumentNullException(nameof(optionsAccessor));
+                throw new ArgumentNullException(nameof(globalOptions));
             }
 
-            var options = optionsAccessor.Value;
+            var options = globalOptions.Value;
 
             Cache = new MemoryCache(new MemoryCacheOptions
             {

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -26,12 +27,14 @@ namespace UriGeneration.Internal
         private readonly IMethodCacheAccessor _methodCacheAccessor;
         private readonly IActionDescriptorCollectionProvider _actionDescriptorsProvider;
         private readonly IModelMetadataProvider _modelMetadataProvider;
+        private readonly UriGenerationOptions _globalOptions;
         private readonly ILogger<ValuesExtractor> _logger;
 
         public ValuesExtractor(
             IMethodCacheAccessor methodCacheAccessor,
             IActionDescriptorCollectionProvider actionDescriptorsProvider,
             IModelMetadataProvider modelMetadataProvider,
+            IOptions<UriGenerationOptions> globalOptions,
             ILogger<ValuesExtractor> logger)
         {
             if (methodCacheAccessor == null)
@@ -49,6 +52,11 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(modelMetadataProvider));
             }
 
+            if (globalOptions == null)
+            {
+                throw new ArgumentNullException(nameof(globalOptions));
+            }
+
             if (logger == null)
             {
                 throw new ArgumentNullException(nameof(logger));
@@ -57,6 +65,7 @@ namespace UriGeneration.Internal
             _methodCacheAccessor = methodCacheAccessor;
             _actionDescriptorsProvider = actionDescriptorsProvider;
             _modelMetadataProvider = modelMetadataProvider;
+            _globalOptions = globalOptions.Value;
             _logger = logger;
         }
 
@@ -70,7 +79,7 @@ namespace UriGeneration.Internal
             try
             {
                 values = default;
-
+                
                 if (!TryExtractMethodCall(expression.Body, out var methodCall))
                 {
                     return false;
@@ -87,7 +96,10 @@ namespace UriGeneration.Internal
                     controller,
                     actionDescriptors.Version);
 
-                if (options?.BypassMethodCache is not true
+                bool? bypassMethodCache = options?.BypassMethodCache
+                    ?? _globalOptions.BypassMethodCache;
+
+                if (bypassMethodCache is not true
                     && methodCache.TryGetValue(key, out MethodCacheEntry? entry))
                 {
                     if (entry!.IsValid)
@@ -118,7 +130,7 @@ namespace UriGeneration.Internal
                 if (!ValidateMethodConcreteness(method, controller)
                     || !TryExtractActionDescriptor(method, actionDescriptors, out var descriptor))
                 {
-                    if (options?.BypassMethodCache is not true)
+                    if (bypassMethodCache is not true)
                     {
                         var invalidEntry = MethodCacheEntry.Invalid();
                         methodCache.Set(key, invalidEntry, MethodCacheEntryOptions);
@@ -133,7 +145,7 @@ namespace UriGeneration.Internal
                     methodCall.Arguments,
                     options);
 
-                if (options?.BypassMethodCache is not true)
+                if (bypassMethodCache is not true)
                 {
                     var validEntry = MethodCacheEntry.Valid(descriptor);
                     methodCache.Set(key, validEntry, MethodCacheEntryOptions);
@@ -306,11 +318,14 @@ namespace UriGeneration.Internal
             return routeValues;
         }
 
-        private static object? EvaluateExpression(
+        private object? EvaluateExpression(
             Expression expression,
             UriOptions? options)
         {
-            if (options?.BypassCachedExpressionCompiler is not true)
+            bool? bypassCachedExpressionCompiler = options?.BypassCachedExpressionCompiler
+                ?? _globalOptions.BypassCachedExpressionCompiler;
+
+            if (bypassCachedExpressionCompiler is not true)
             {
                 return CachedExpressionCompiler.Evaluate(expression);
             }
