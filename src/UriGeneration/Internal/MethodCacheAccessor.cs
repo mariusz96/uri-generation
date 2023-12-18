@@ -8,7 +8,7 @@ namespace UriGeneration.Internal
     {
         public IMemoryCache Cache { get; }
 
-        public MethodCacheAccessor(IOptions<MethodCacheOptions> optionsAccessor)
+        public MethodCacheAccessor(IOptions<UriGenerationOptions> optionsAccessor)
         {
             if (optionsAccessor == null)
             {
@@ -19,8 +19,8 @@ namespace UriGeneration.Internal
 
             Cache = new MemoryCache(new MemoryCacheOptions
             {
-                SizeLimit = options.SizeLimit,
-                CompactionPercentage = options.CompactionPercentage
+                SizeLimit = options.MethodCacheSizeLimit ?? 500,
+                CompactionPercentage = options.MethodCacheCompactionPercentage ?? 0.5
             });
         }
 

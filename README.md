@@ -66,15 +66,15 @@ Install-Package UriGeneration
 ```
 dotnet add package UriGeneration
 ```
-- Register UriGeneration in a service container (each cache entry will have a size of 1):
+- Register UriGeneration in a service container (each method cache entry will have a size of 1):
 ```C#
 builder.Services.AddUriGeneration();
 ```
 ```C#
-builder.Services.AddUriGeneration(o =>
+builder.Services.AddUriGeneration(options =>
 {
-    o.SizeLimit = 500;
-    o.CompactionPercentage = 0.5;
+    options.MethodCacheSizeLimit = 500;
+    options.MethodCacheCompactionPercentage = 0.5;
 });
 ```
 - Request an instance of IUriGenerator singleton service from any constructor in your app:
