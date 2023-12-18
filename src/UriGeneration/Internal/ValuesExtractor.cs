@@ -19,10 +19,12 @@ namespace UriGeneration.Internal
 {
     internal class ValuesExtractor : IValuesExtractor
     {
-        private static readonly MemoryCacheEntryOptions MethodCacheEntryOptions =
-            new() { Size = 1 };
+        private static readonly Func<BindingSource?, bool> BindingSourceFilterDelegate =
+            BindingSourceFilter;
         private static readonly ParameterExpression FakeParameter =
             Expression.Parameter(typeof(object), null);
+        private static readonly MemoryCacheEntryOptions MethodCacheEntryOptions =
+            new() { Size = 1 };
 
         private readonly IMethodCacheAccessor _methodCacheAccessor;
         private readonly IActionDescriptorCollectionProvider _actionDescriptorsProvider;
@@ -79,7 +81,7 @@ namespace UriGeneration.Internal
             try
             {
                 values = default;
-                
+
                 if (!TryExtractMethodCall(expression.Body, out var methodCall))
                 {
                     return false;
@@ -281,32 +283,31 @@ namespace UriGeneration.Internal
                 string key = bindingInfo.BinderModelName ?? metadata.BinderModelName ?? parameter.Name;
                 var bindingSource = bindingInfo.BindingSource ?? metadata.BindingSource;
 
-                if (bindingSource == null // Might be null in apps that don't use InferParameterBindingInfoConvention.
-                    || bindingSource.CanAcceptDataFrom(BindingSource.Query)
-                    || bindingSource.CanAcceptDataFrom(BindingSource.Path))
-                {
-                    var argument = arguments[parameter.ParameterInfo.Position];
+                var bindingSourceFilter = _globalOptions.BindingSourceFilter
+                    ?? BindingSourceFilterDelegate;
 
-                    object? value;
-
-                    if (argument is ConstantExpression ce)
-                    {
-                        value = ce.Value;
-                    }
-                    else
-                    {
-                        value = EvaluateExpression(argument, options);
-                    }
-
-                    routeValues.Add(new KeyValuePair<string, object?>(key, value));
-                    routeValueKeys.Add(key);
-                    _logger.RouteValueExtracted(key, value);
-                }
-                else
+                if (!bindingSourceFilter(bindingSource))
                 {
                     _logger.DisallowedBindingSource(parameter.Name, bindingSource?.Id);
                     continue;
                 }
+
+                var argument = arguments[parameter.ParameterInfo.Position];
+
+                object? value;
+
+                if (argument is ConstantExpression ce)
+                {
+                    value = ce.Value;
+                }
+                else
+                {
+                    value = EvaluateExpression(argument, options);
+                }
+
+                routeValues.Add(new KeyValuePair<string, object?>(key, value));
+                routeValueKeys.Add(key);
+                _logger.RouteValueExtracted(key, value);
             }
 
             NormalizeRouteValues(
@@ -316,6 +317,13 @@ namespace UriGeneration.Internal
                 routeValueKeys);
 
             return routeValues;
+        }
+
+        private static bool BindingSourceFilter(BindingSource? bindingSource)
+        {
+            return bindingSource == null // Might be null in apps that don't use InferParameterBindingInfoConvention.
+                || bindingSource.CanAcceptDataFrom(BindingSource.Query)
+                || bindingSource.CanAcceptDataFrom(BindingSource.Path);
         }
 
         private object? EvaluateExpression(

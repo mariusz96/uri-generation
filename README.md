@@ -16,6 +16,17 @@ string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
 - Supports bypassable caching
 - Invalidates HttpContext's ambient route values
 
+## Binding source filter:
+You can specify a predicate which can determine whether an action's parameter should be included based on its binding source.
+
+The default one is:
+```C#
+UriGenerationOptions.BindingSourceFilter = bindingSource =>
+    bindingSource == null
+    || bindingSource.CanAcceptDataFrom(BindingSource.Query)
+    || bindingSource.CanAcceptDataFrom(BindingSource.Path);
+```
+
 ## Specifying an endpoint name:
 If you use named attribute routes:
 ```C#
@@ -74,9 +85,13 @@ builder.Services.AddUriGeneration();
 builder.Services.AddUriGeneration(options =>
 {
     options.MethodCacheSizeLimit = 500;
-    options.MethodCacheCompactionPercentage = 0.5;
+    options.MethodCacheCompactionPercentage = 0.5;    
     options.BypassMethodCache = false;
     options.BypassCachedExpressionCompiler = false;
+    options.BindingSourceFilter = bindingSource =>
+        bindingSource == null
+        || bindingSource.CanAcceptDataFrom(BindingSource.Query)
+        || bindingSource.CanAcceptDataFrom(BindingSource.Path);
 });
 ```
 - Request an instance of IUriGenerator singleton service from any constructor in your app:
