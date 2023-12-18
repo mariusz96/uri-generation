@@ -54,11 +54,14 @@ namespace UriGeneration.IntegrationTests.Controllers
         [HttpGet]
         public string? Test4()
         {
+            string scheme = "http";
+            var host = new HostString("localhost");
+
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 c => c.Test4(),
                 endpointName: null,
-                "http",
-                new HostString("localhost"));
+                scheme,
+                host);
         }
 
         [HttpGet]
