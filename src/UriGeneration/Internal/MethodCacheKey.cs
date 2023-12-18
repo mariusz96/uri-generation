@@ -2,8 +2,5 @@
 
 namespace UriGeneration.Internal
 {
-    internal record MethodCacheKey(
-        MethodInfo Method,
-        Type Controller,
-        int ActionDescriptorVersion);
+    internal record MethodCacheKey(MethodInfo Method, Type Controller, int ActionDescriptorsVersion);
 }

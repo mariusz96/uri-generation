@@ -143,6 +143,7 @@ namespace UriGeneration.Internal
                 where TController : class
         {
             if (!_valuesExtractor.TryExtractValues<TController>(
+                httpContext: null,
                 expression,
                 out var values,
                 options))
@@ -181,6 +182,7 @@ namespace UriGeneration.Internal
                 where TController : class
         {
             if (!_valuesExtractor.TryExtractValues<TController>(
+                httpContext,
                 expression,
                 out var values,
                 options))
@@ -222,6 +224,7 @@ namespace UriGeneration.Internal
                 where TController : class
         {
             if (!_valuesExtractor.TryExtractValues<TController>(
+                httpContext: null,
                 expression,
                 out var values,
                 options))
@@ -266,6 +269,7 @@ namespace UriGeneration.Internal
                 where TController : class
         {
             if (!_valuesExtractor.TryExtractValues<TController>(
+                httpContext,
                 expression,
                 out var values,
                 options))

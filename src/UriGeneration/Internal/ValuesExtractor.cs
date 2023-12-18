@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.Abstractions;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
@@ -15,12 +18,10 @@ namespace UriGeneration.Internal
 {
     internal class ValuesExtractor : IValuesExtractor
     {
-        private const string AreaKey = "area";
-
+        private static readonly MemoryCacheEntryOptions MethodCacheEntryOptions =
+            new() { Size = 1 };
         private static readonly ParameterExpression FakeParameter =
             Expression.Parameter(typeof(object), null);
-        private static readonly MemoryCacheEntryOptions CacheEntryOptions =
-            new() { Size = 1 };
 
         private readonly IMethodCacheAccessor _methodCacheAccessor;
         private readonly IActionDescriptorCollectionProvider _actionDescriptorsProvider;
@@ -60,6 +61,7 @@ namespace UriGeneration.Internal
         }
 
         public bool TryExtractValues<TController>(
+            HttpContext? httpContext,
             LambdaExpression expression,
             [NotNullWhen(true)] out Values? values,
             UriOptions? options = null)
@@ -93,6 +95,7 @@ namespace UriGeneration.Internal
                         _logger.ValidCacheEntryRetrieved(entry.ActionDescriptor);
 
                         var entryRouteValues = ExtractRouteValues(
+                            httpContext,
                             entry.ActionDescriptor,
                             methodCall.Arguments,
                             options);
@@ -118,13 +121,14 @@ namespace UriGeneration.Internal
                     if (options?.BypassMethodCache is not true)
                     {
                         var invalidEntry = MethodCacheEntry.Invalid();
-                        methodCache.Set(key, invalidEntry, CacheEntryOptions);
+                        methodCache.Set(key, invalidEntry, MethodCacheEntryOptions);
                     }
 
                     return false;
                 }
 
                 var routeValues = ExtractRouteValues(
+                    httpContext,
                     descriptor,
                     methodCall.Arguments,
                     options);
@@ -132,7 +136,7 @@ namespace UriGeneration.Internal
                 if (options?.BypassMethodCache is not true)
                 {
                     var validEntry = MethodCacheEntry.Valid(descriptor);
-                    methodCache.Set(key, validEntry, CacheEntryOptions);
+                    methodCache.Set(key, validEntry, MethodCacheEntryOptions);
                 }
 
                 values = new Values(
@@ -224,11 +228,14 @@ namespace UriGeneration.Internal
         }
 
         private ICollection<KeyValuePair<string, object?>> ExtractRouteValues(
+            HttpContext? httpContext,
             ActionDescriptor actionDescriptor,
-            ReadOnlyCollection<Expression> methodCallArguments,
+            ReadOnlyCollection<Expression> arguments,
             UriOptions? options)
         {
             var routeValues = new List<KeyValuePair<string, object?>>();
+            var routeValueKeys = new HashSet<string>();
+
             var parameters = actionDescriptor.Parameters
                 .OfType<ControllerParameterDescriptor>();
 
@@ -266,21 +273,21 @@ namespace UriGeneration.Internal
                     || bindingSource.CanAcceptDataFrom(BindingSource.Query)
                     || bindingSource.CanAcceptDataFrom(BindingSource.Path))
                 {
-                    var methodCallArgument = methodCallArguments[
-                        parameter.ParameterInfo.Position];
+                    var argument = arguments[parameter.ParameterInfo.Position];
 
                     object? value;
 
-                    if (methodCallArgument is ConstantExpression ce)
+                    if (argument is ConstantExpression ce)
                     {
                         value = ce.Value;
                     }
                     else
                     {
-                        value = EvaluateExpression(methodCallArgument, options);
+                        value = EvaluateExpression(argument, options);
                     }
 
                     routeValues.Add(new KeyValuePair<string, object?>(key, value));
+                    routeValueKeys.Add(key);
                     _logger.RouteValueExtracted(key, value);
                 }
                 else
@@ -290,10 +297,11 @@ namespace UriGeneration.Internal
                 }
             }
 
-            string areaName = ExtractAreaName(actionDescriptor);
-
-            routeValues.Add(new KeyValuePair<string, object?>(AreaKey, areaName));
-            _logger.RouteValueExtracted(AreaKey, areaName);
+            NormalizeRouteValues(
+                httpContext,
+                actionDescriptor,
+                routeValues,
+                routeValueKeys);
 
             return routeValues;
         }
@@ -318,17 +326,50 @@ namespace UriGeneration.Internal
             }
         }
 
-        private static string ExtractAreaName(ActionDescriptor actionDescriptor)
+        private void NormalizeRouteValues(
+            HttpContext? httpContext,
+            ActionDescriptor actionDescriptor,
+            ICollection<KeyValuePair<string, object?>> routeValues,
+            HashSet<string> routeValueKeys)
         {
-            if (actionDescriptor.RouteValues.TryGetValue(AreaKey, out string? areaName)
-                && areaName != null)
+            var desriptorValues = GetActionDescriptorValues(actionDescriptor);
+
+            foreach (var kv in desriptorValues)
             {
-                return areaName;
+                if (!routeValueKeys.Contains(kv.Key))
+                {
+                    routeValues.Add(new KeyValuePair<string, object?>(kv.Key, kv.Value));
+                    routeValueKeys.Add(kv.Key);
+                    _logger.RouteValueExtracted(kv.Key, kv.Value);
+                }
             }
-            else
+
+            var ambientValues = GetAmbientValues(httpContext);
+
+            if (ambientValues is not null)
             {
-                return string.Empty; // Don't use the 'ambient' value of area.
+                foreach (var kv in ambientValues)
+                {
+                    if (!routeValueKeys.Contains(kv.Key))
+                    {
+                        routeValues.Add(new KeyValuePair<string, object?>(kv.Key, null));
+                        routeValueKeys.Add(kv.Key);
+                        _logger.RouteValueExtracted(kv.Key, null);
+                    }
+                }
             }
+        }
+
+        private static IDictionary<string, string?> GetActionDescriptorValues(
+            ActionDescriptor actionDescriptor)
+        {
+            return actionDescriptor.RouteValues;
+        }
+
+        private static RouteValueDictionary? GetAmbientValues(
+            HttpContext? httpContext)
+        {
+            return httpContext?.Features.Get<IRouteValuesFeature>()?.RouteValues;
         }
     }
 }

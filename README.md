@@ -14,6 +14,7 @@ string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
 - Supports specifying an endpoint name
 - Supports LinkOptions
 - Supports bypassable caching
+- Invalidates HttpContext's ambient route values
 
 ## Specifying an endpoint name:
 If you use named attribute routes:
