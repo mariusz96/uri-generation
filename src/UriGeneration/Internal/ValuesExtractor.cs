@@ -108,6 +108,11 @@ namespace UriGeneration.Internal
                     {
                         _logger.ValidCacheEntryRetrieved(entry.ActionDescriptor);
 
+                        if (!ValidateBoundProperties(entry.ActionDescriptor))
+                        {
+                            return false;
+                        }
+
                         var entryRouteValues = ExtractRouteValues(
                             httpContext,
                             entry.ActionDescriptor,
@@ -138,6 +143,11 @@ namespace UriGeneration.Internal
                         methodCache.Set(key, invalidEntry, MethodCacheEntryOptions);
                     }
 
+                    return false;
+                }
+
+                if (!ValidateBoundProperties(descriptor))
+                {
                     return false;
                 }
 
@@ -241,6 +251,17 @@ namespace UriGeneration.Internal
             return true;
         }
 
+        private bool ValidateBoundProperties(ActionDescriptor actionDescriptor)
+        {
+            if (actionDescriptor.BoundProperties.Any())
+            {
+                _logger.BoundProperties();
+                return false;
+            }
+
+            return true;
+        }
+
         private ICollection<KeyValuePair<string, object?>> ExtractRouteValues(
             HttpContext? httpContext,
             ActionDescriptor actionDescriptor,
@@ -266,8 +287,7 @@ namespace UriGeneration.Internal
                 {
                     // For backward compatibility, if there's a custom model metadata provider that
                     // only implements the older IModelMetadataProvider interface, access the more
-                    // limited metadata information it supplies. In this scenario, validation attributes
-                    // are not supported on parameters.
+                    // limited metadata information it supplies.
                     metadata = _modelMetadataProvider.GetMetadataForType(parameter.ParameterType);
                 }
 
@@ -288,7 +308,7 @@ namespace UriGeneration.Internal
 
                 if (!bindingSourceFilter(bindingSource))
                 {
-                    _logger.DisallowedBindingSource(parameter.Name, bindingSource?.Id);
+                    _logger.DisallowedBindingSource(parameter.Name, bindingSource);
                     continue;
                 }
 

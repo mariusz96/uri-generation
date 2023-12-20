@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -34,22 +35,25 @@ namespace UriGeneration.Internal
         [LoggerMessage(1009, LogLevel.Debug, "Successfully extracted MethodInfo's ActionDescriptor.", EventName = nameof(ActionDescriptorExtracted))]
         public static partial void ActionDescriptorExtracted(this ILogger logger);
 
-        [LoggerMessage(1010, LogLevel.Debug, "No ActionDescriptor with MethodInfo: {MethodInfo} found in ActionDescriptorCollection.", EventName = nameof(NoActionDescriptorFound))]
+        [LoggerMessage(1010, LogLevel.Debug, "Controller cannot have bound properties.", EventName = nameof(BoundProperties))]
+        public static partial void BoundProperties(this ILogger logger);
+
+        [LoggerMessage(1011, LogLevel.Debug, "No ActionDescriptor with MethodInfo: {MethodInfo} found in ActionDescriptorCollection.", EventName = nameof(NoActionDescriptorFound))]
         public static partial void NoActionDescriptorFound(this ILogger logger, MethodInfo methodInfo);
 
-        [LoggerMessage(1011, LogLevel.Debug, "Binding not allowed for parameter: {ParameterName}.", EventName = nameof(BindingNotAllowed))]
+        [LoggerMessage(1012, LogLevel.Debug, "Binding not allowed for parameter: {ParameterName}.", EventName = nameof(BindingNotAllowed))]
         public static partial void BindingNotAllowed(this ILogger logger, string parameterName);
 
-        [LoggerMessage(1012, LogLevel.Debug, "Parameter: {ParameterName} cannot have binding source: {BindingSource}.", EventName = nameof(DisallowedBindingSource))]
-        public static partial void DisallowedBindingSource(this ILogger logger, string parameterName, string? bindingSource);
+        [LoggerMessage(1013, LogLevel.Debug, "Parameter: {ParameterName} cannot have binding source: {BindingSource}.", EventName = nameof(DisallowedBindingSource))]
+        public static partial void DisallowedBindingSource(this ILogger logger, string parameterName, BindingSource? bindingSource);
 
-        [LoggerMessage(1013, LogLevel.Debug, "Successfully extracted route value: {Key}, {Value}.", EventName = nameof(RouteValueExtracted))]
+        [LoggerMessage(1014, LogLevel.Debug, "Successfully extracted route value: {Key}, {Value}.", EventName = nameof(RouteValueExtracted))]
         public static partial void RouteValueExtracted(this ILogger logger, string? key, object? value);
 
-        [LoggerMessage(1014, LogLevel.Debug, "Successfully extracted all values from expression.", EventName = nameof(ValuesExtracted))]
+        [LoggerMessage(1015, LogLevel.Debug, "Successfully extracted all values from expression.", EventName = nameof(ValuesExtracted))]
         public static partial void ValuesExtracted(this ILogger logger);
 
-        [LoggerMessage(1015, LogLevel.Debug, "Failed to extract one or more values from expression {Expression}: an exception occurred.", EventName = nameof(ValuesNotExtracted))]
+        [LoggerMessage(1016, LogLevel.Debug, "Failed to extract one or more values from expression {Expression}: an exception occurred.", EventName = nameof(ValuesNotExtracted))]
         public static partial void ValuesNotExtracted(this ILogger logger, LambdaExpression expression, Exception exception);
     }
 }
