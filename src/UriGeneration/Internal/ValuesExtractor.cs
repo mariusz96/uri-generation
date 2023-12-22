@@ -36,7 +36,7 @@ namespace UriGeneration.Internal
             IMethodCacheAccessor methodCacheAccessor,
             IActionDescriptorCollectionProvider actionDescriptorsProvider,
             IModelMetadataProvider modelMetadataProvider,
-            IOptions<UriGenerationOptions> globalOptions,
+            IOptions<UriGenerationOptions> globalOptionsAccessor,
             ILogger<ValuesExtractor> logger)
         {
             if (methodCacheAccessor == null)
@@ -54,9 +54,9 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(modelMetadataProvider));
             }
 
-            if (globalOptions == null)
+            if (globalOptionsAccessor == null)
             {
-                throw new ArgumentNullException(nameof(globalOptions));
+                throw new ArgumentNullException(nameof(globalOptionsAccessor));
             }
 
             if (logger == null)
@@ -67,15 +67,15 @@ namespace UriGeneration.Internal
             _methodCacheAccessor = methodCacheAccessor;
             _actionDescriptorsProvider = actionDescriptorsProvider;
             _modelMetadataProvider = modelMetadataProvider;
-            _globalOptions = globalOptions.Value;
+            _globalOptions = globalOptionsAccessor.Value;
             _logger = logger;
         }
 
         public bool TryExtractValues<TController>(
             HttpContext? httpContext,
-            LambdaExpression expression,
-            [NotNullWhen(true)] out Values? values,
-            UriOptions? options = null)
+            Expression<Action<TController>> expression,
+            UriOptions? options,
+            [NotNullWhen(true)] out Values? values)
                 where TController : class
         {
             try
@@ -375,9 +375,9 @@ namespace UriGeneration.Internal
             ICollection<KeyValuePair<string, object?>> routeValues,
             HashSet<string> routeValueKeys)
         {
-            var desriptorValues = GetActionDescriptorValues(actionDescriptor);
+            var requiredValues = GetRequiredValues(actionDescriptor);
 
-            foreach (var kv in desriptorValues)
+            foreach (var kv in requiredValues)
             {
                 if (!routeValueKeys.Contains(kv.Key))
                 {
@@ -389,7 +389,7 @@ namespace UriGeneration.Internal
 
             var ambientValues = GetAmbientValues(httpContext);
 
-            if (ambientValues is not null)
+            if (ambientValues != null)
             {
                 foreach (var kv in ambientValues)
                 {
@@ -403,7 +403,7 @@ namespace UriGeneration.Internal
             }
         }
 
-        private static IDictionary<string, string?> GetActionDescriptorValues(
+        private static IDictionary<string, string?> GetRequiredValues(
             ActionDescriptor actionDescriptor)
         {
             return actionDescriptor.RouteValues;

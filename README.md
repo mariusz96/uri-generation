@@ -17,15 +17,18 @@ string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
 - Invalidates HttpContext's ambient route values
 
 ## Binding source filter:
-You can specify a predicate which can determine whether an action's parameter should be included based on its binding source.
+You can specify a predicate which can determine whether an action parameter should be included based on its binding source.
 
 The default one is:
 ```C#
-UriGenerationOptions.BindingSourceFilter = bindingSource =>
+Func<BindingSource?, bool> bindingSourceFilter = bindingSource =>
     bindingSource == null
     || bindingSource.CanAcceptDataFrom(BindingSource.Query)
     || bindingSource.CanAcceptDataFrom(BindingSource.Path);
 ```
+You pass null or default(T) to excluded action parameters when calling IUriGenerator.GetUriByExpression<TController> or a similar method.
+
+For more information on binding sources, see ASP.NET Core documentation.
 
 ## Specifying an endpoint name:
 If you use named attribute routes:
@@ -65,9 +68,9 @@ For more information on endpoint names, see ASP.NET Core documentation.
 ## Performance:
 Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
 
-Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted controller names, action names, and route values' keys within the scope of the application lifetime.
+Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted action methods' metadata.
 
-This means that, for example, on 2017 Surface Book 2 you are able to generate 100 000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
+This means that, for example, on 2017 Surface Book 2 you are able to generate 150 000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
 
 ## Setup:
 - Install UriGeneration via NuGet Package Manager, Package Manager Console or dotnet CLI:

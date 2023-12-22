@@ -43,6 +43,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator
                 .GetPathByExpression<AnotherConventionalRoutingController>(
+                    HttpContext,
                     c => c.Index());
         }
 

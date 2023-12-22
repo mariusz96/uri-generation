@@ -8,19 +8,19 @@ namespace UriGeneration.Internal
     {
         public IMemoryCache Cache { get; }
 
-        public MethodCacheAccessor(IOptions<UriGenerationOptions> globalOptions)
+        public MethodCacheAccessor(IOptions<UriGenerationOptions> globalOptionsAccessor)
         {
-            if (globalOptions == null)
+            if (globalOptionsAccessor == null)
             {
-                throw new ArgumentNullException(nameof(globalOptions));
+                throw new ArgumentNullException(nameof(globalOptionsAccessor));
             }
 
-            var options = globalOptions.Value;
+            var globalOptions = globalOptionsAccessor.Value;
 
             Cache = new MemoryCache(new MemoryCacheOptions
             {
-                SizeLimit = options.MethodCacheSizeLimit ?? 500,
-                CompactionPercentage = options.MethodCacheCompactionPercentage ?? 0.5
+                SizeLimit = globalOptions.MethodCacheSizeLimit ?? 500,
+                CompactionPercentage = globalOptions.MethodCacheCompactionPercentage ?? 0.5
             });
         }
 

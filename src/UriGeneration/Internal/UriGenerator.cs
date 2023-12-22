@@ -41,7 +41,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return GetPathByExpressionWithoutHttpContext<TController>(
+            return GetPathByExpressionWithoutHttpContext(
                 expression,
                 endpointName,
                 pathBase,
@@ -68,7 +68,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return GetPathByExpressionWithHttpContext<TController>(
+            return GetPathByExpressionWithHttpContext(
                 httpContext,
                 expression,
                 endpointName,
@@ -92,7 +92,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return GetUriByExpressionWithoutHttpContext<TController>(
+            return GetUriByExpressionWithoutHttpContext(
                 expression,
                 endpointName,
                 scheme,
@@ -123,7 +123,7 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return GetUriByExpressionWithHttpContext<TController>(
+            return GetUriByExpressionWithHttpContext(
                 httpContext,
                 expression,
                 endpointName,
@@ -135,18 +135,18 @@ namespace UriGeneration.Internal
         }
 
         private string? GetPathByExpressionWithoutHttpContext<TController>(
-            LambdaExpression expression,
+            Expression<Action<TController>> expression,
             string? endpointName = null,
             PathString pathBase = default,
             FragmentString fragment = default,
             UriOptions? options = null)
                 where TController : class
         {
-            if (!_valuesExtractor.TryExtractValues<TController>(
+            if (!_valuesExtractor.TryExtractValues(
                 httpContext: null,
                 expression,
-                out var values,
-                options))
+                options,
+                out var values))
             {
                 return default;
             }
@@ -174,18 +174,18 @@ namespace UriGeneration.Internal
 
         private string? GetPathByExpressionWithHttpContext<TController>(
             HttpContext httpContext,
-            LambdaExpression expression,
+            Expression<Action<TController>> expression,
             string? endpointName = null,
             PathString? pathBase = null,
             FragmentString fragment = default,
             UriOptions? options = null)
                 where TController : class
         {
-            if (!_valuesExtractor.TryExtractValues<TController>(
+            if (!_valuesExtractor.TryExtractValues(
                 httpContext,
                 expression,
-                out var values,
-                options))
+                options,
+                out var values))
             {
                 return default;
             }
@@ -214,7 +214,7 @@ namespace UriGeneration.Internal
         }
 
         private string? GetUriByExpressionWithoutHttpContext<TController>(
-            LambdaExpression expression,
+            Expression<Action<TController>> expression,
             string? endpointName,
             string scheme,
             HostString host,
@@ -223,11 +223,11 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
-            if (!_valuesExtractor.TryExtractValues<TController>(
+            if (!_valuesExtractor.TryExtractValues(
                 httpContext: null,
                 expression,
-                out var values,
-                options))
+                options,
+                out var values))
             {
                 return default;
             }
@@ -259,7 +259,7 @@ namespace UriGeneration.Internal
 
         private string? GetUriByExpressionWithHttpContext<TController>(
             HttpContext httpContext,
-            LambdaExpression expression,
+            Expression<Action<TController>> expression,
             string? endpointName = null,
             string? scheme = null,
             HostString? host = null,
@@ -268,11 +268,11 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
-            if (!_valuesExtractor.TryExtractValues<TController>(
+            if (!_valuesExtractor.TryExtractValues(
                 httpContext,
                 expression,
-                out var values,
-                options))
+                options,
+                out var values))
             {
                 return default;
             }

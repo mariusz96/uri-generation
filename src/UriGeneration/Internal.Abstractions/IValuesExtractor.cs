@@ -6,6 +6,6 @@ namespace UriGeneration.Internal.Abstractions
 {
     internal interface IValuesExtractor
     {
-        bool TryExtractValues<TController>(HttpContext? httpContext, LambdaExpression expression, [NotNullWhen(true)] out Values? values, UriOptions? options = null) where TController : class;
+        bool TryExtractValues<TController>(HttpContext? httpContext, Expression<Action<TController>> expression, UriOptions? options, [NotNullWhen(true)] out Values? values) where TController : class;
     }
 }
