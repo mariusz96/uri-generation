@@ -269,7 +269,7 @@ namespace UriGeneration.Internal
             UriOptions? options)
         {
             var routeValues = new List<KeyValuePair<string, object?>>();
-            var routeValueKeys = new HashSet<string>();
+            var routeValueKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             var parameters = actionDescriptor.Parameters
                 .OfType<ControllerParameterDescriptor>();
