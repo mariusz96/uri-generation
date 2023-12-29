@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using Microsoft.AspNetCore.Mvc.Controllers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UriGeneration.Internal
 {
@@ -7,15 +7,9 @@ namespace UriGeneration.Internal
     {
         [MemberNotNullWhen(
             true,
-            nameof(MethodName),
-            nameof(ControllerName),
-            nameof(IncludedMethodParameters),
-            nameof(ControllerAreaName))]
+            nameof(ActionDescriptor))]
         public bool IsValid { get; }
-        public string? MethodName { get; }
-        public string? ControllerName { get; }
-        public ParameterInfo[]? IncludedMethodParameters { get; }
-        public string? ControllerAreaName { get; }
+        public ControllerActionDescriptor? ActionDescriptor { get; }
 
         private MethodCacheEntry(bool isValid)
         {
@@ -24,16 +18,10 @@ namespace UriGeneration.Internal
 
         private MethodCacheEntry(
             bool isValid,
-            string methodName,
-            string controllerName,
-            ParameterInfo[] includedMethodParameters,
-            string controllerAreaName)
+            ControllerActionDescriptor actionDescriptor)
         {
             IsValid = isValid;
-            MethodName = methodName;
-            ControllerName = controllerName;
-            IncludedMethodParameters = includedMethodParameters;
-            ControllerAreaName = controllerAreaName;
+            ActionDescriptor = actionDescriptor;
         }
     }
 }

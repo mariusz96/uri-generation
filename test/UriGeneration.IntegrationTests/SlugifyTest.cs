@@ -13,7 +13,7 @@ namespace UriGeneration.IntegrationTests
         }
 
         [Fact]
-        public async void Works_WithOutboundParameterTransformer()
+        public async Task Works_WithOutboundParameterTransformer()
         {
             var client = _factory.CreateClient();
 

@@ -6,6 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
+#if NET8_0_OR_GREATER
+using UriGeneration.IntegrationTests.Services;
+#endif
+
 namespace UriGeneration.IntegrationTests.WebApplicationFactories
 {
     public class CommonWebApplicationFactory : WebApplicationFactory<Program>
@@ -14,10 +18,11 @@ namespace UriGeneration.IntegrationTests.WebApplicationFactories
         {
             builder.ConfigureServices(services =>
             {
-                services.AddUriGeneration();
 #if NET8_0_OR_GREATER
                 services.AddKeyedSingleton<ITestService, TestService>("test");
 #endif
+
+                services.AddUriGeneration();
 
                 services.AddRazorPages();
                 services.AddControllersWithViews();
@@ -47,20 +52,20 @@ namespace UriGeneration.IntegrationTests.WebApplicationFactories
 
                     endpoints.MapControllerRoute(
                         name: "Rn1",
-                        pattern: "RouteName1/Test6",
+                        pattern: "RouteName1/Test8",
                         defaults: new
                         {
                             controller = "ConventionalRouting",
-                            action = "Test6"
+                            action = "Test8"
                         });
 
                     endpoints.MapControllerRoute(
                         name: "Rn2",
-                        pattern: "RouteName2/Test6",
+                        pattern: "RouteName2/Test8",
                         defaults: new
                         {
                             controller = "ConventionalRouting",
-                            action = "Test6"
+                            action = "Test8"
                         });
 
                     endpoints.MapDefaultControllerRoute();

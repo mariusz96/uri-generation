@@ -1,32 +1,28 @@
-﻿using UriGeneration.Internal;
-using UriGeneration.Internal.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using UriGeneration.Internal;
+using UriGeneration.Internal.Abstractions;
 
 namespace UriGeneration
 {
     public static class ServiceCollectionExtensions
     {
-        private static readonly Action<MethodCacheOptions> DefaultConfigure =
-            o =>
-            {
-                o.SizeLimit = 500;
-                o.CompactionPercentage = 0.5;
-            };
-
         public static IServiceCollection AddUriGeneration(
             this IServiceCollection services,
-            Action<MethodCacheOptions>? configure = null)
+            Action<UriGenerationOptions>? configure = null)
         {
             if (services == null)
             {
                 throw new ArgumentNullException(nameof(services));
             }
 
-            configure ??= DefaultConfigure;
-
             services.AddOptions();
-            services.Configure(configure);
+
+            if (configure != null)
+            {
+                services.Configure(configure);
+            }
+
             services.TryAddSingleton<IMethodCacheAccessor, MethodCacheAccessor>();
             services.TryAddSingleton<IValuesExtractor, ValuesExtractor>();
             services.TryAddSingleton<IUriGenerator, UriGenerator>();

@@ -9,12 +9,26 @@ string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
 ## Features:
 - Extracts action name, controller name, and route values from expression
 - Delegates URL generation to LinkGenerator
-- Supports ActionName, Area, NonAction, NonController, FromBody, FromForm, FromHeader, FromServices and FromKeyedServices attributes
-- Supports IFormFile, IFormFileCollection, IEnumerable&lt;IFormFile&gt;, CancellationToken, and IFormCollection types
+- Supports ASP.NET Core model metadata and application model conventions
+- Supports simple types and collections of simple types only
 - Supports specifying an endpoint name
-- Supports Controller and Async suffixes
 - Supports LinkOptions
 - Supports bypassable caching
+- Invalidates HttpContext's ambient route values
+
+## Binding source filter:
+You can specify a predicate which can determine whether an action parameter should be included based on its binding source.
+
+The default one is:
+```C#
+Func<BindingSource?, bool> bindingSourceFilter = bindingSource =>
+    bindingSource == null
+    || bindingSource.CanAcceptDataFrom(BindingSource.Query)
+    || bindingSource.CanAcceptDataFrom(BindingSource.Path);
+```
+You pass null or default(T) to excluded action parameters when calling IUriGenerator.GetUriByExpression<TController> or a similar method.
+
+For more information on binding sources, see ASP.NET Core documentation.
 
 ## Specifying an endpoint name:
 If you use named attribute routes:
@@ -54,9 +68,9 @@ For more information on endpoint names, see ASP.NET Core documentation.
 ## Performance:
 Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
 
-Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted controller names, action names, and route values' keys within the scope of the application lifetime.
+Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted action methods' metadata.
 
-This means that, for example, on 2017 Surface Book 2 you are able to generate 200 000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
+This means that, for example, on 2017 Surface Book 2 you are able to generate 150 000 URLs in a second using a template like this: https://localhost:44339/api/invoices/{id}.
 
 ## Setup:
 - Install UriGeneration via NuGet Package Manager, Package Manager Console or dotnet CLI:
@@ -66,15 +80,21 @@ Install-Package UriGeneration
 ```
 dotnet add package UriGeneration
 ```
-- Register UriGeneration in a service container (each cache entry will have a size of 1):
+- Register UriGeneration in a service container (each method cache entry will have a size of 1):
 ```C#
 builder.Services.AddUriGeneration();
 ```
 ```C#
-builder.Services.AddUriGeneration(o =>
+builder.Services.AddUriGeneration(options =>
 {
-    o.SizeLimit = 500;
-    o.CompactionPercentage = 0.5;
+    options.MethodCacheSizeLimit = 500;
+    options.MethodCacheCompactionPercentage = 0.5;    
+    options.BypassMethodCache = false;
+    options.BypassCachedExpressionCompiler = false;
+    options.BindingSourceFilter = bindingSource =>
+        bindingSource == null
+        || bindingSource.CanAcceptDataFrom(BindingSource.Query)
+        || bindingSource.CanAcceptDataFrom(BindingSource.Path);
 });
 ```
 - Request an instance of IUriGenerator singleton service from any constructor in your app:
