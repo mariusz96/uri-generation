@@ -26,7 +26,7 @@ Func<BindingSource?, bool> bindingSourceFilter = bindingSource =>
     || bindingSource.CanAcceptDataFrom(BindingSource.Query)
     || bindingSource.CanAcceptDataFrom(BindingSource.Path);
 ```
-You pass null or default(T) to excluded action parameters when calling IUriGenerator.GetUriByExpression<TController> or a similar method.
+You pass null or default(T) to excluded action parameters when calling IUriGenerator.GetUriByExpression or a similar method.
 
 For more information on binding sources, see ASP.NET Core documentation.
 
