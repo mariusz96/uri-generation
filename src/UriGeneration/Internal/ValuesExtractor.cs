@@ -313,7 +313,6 @@ namespace UriGeneration.Internal
                 }
 
                 var argument = arguments[parameter.ParameterInfo.Position];
-
                 object? value;
 
                 if (argument is ConstantExpression ce)

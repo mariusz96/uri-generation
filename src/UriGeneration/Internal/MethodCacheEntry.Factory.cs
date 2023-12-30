@@ -8,8 +8,12 @@ namespace UriGeneration.Internal
             new(isValid: false);
 
         public static MethodCacheEntry Valid(
-            ControllerActionDescriptor actionDescriptor) =>
-            new(isValid: true, actionDescriptor);
+            ControllerActionDescriptor actionDescriptor)
+        {
+            return new(
+                isValid: true,
+                actionDescriptor);
+        }
 
         public static MethodCacheEntry Invalid() => InvalidInstance;
     }
