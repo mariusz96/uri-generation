@@ -106,7 +106,7 @@ namespace UriGeneration.Internal
                 {
                     if (entry!.IsValid)
                     {
-                        _logger.ValidCacheEntryRetrieved(entry.ActionDescriptor);
+                        _logger.ValidCacheEntryRetrieved(entry.ActionDescriptor.DisplayName);
 
                         if (!ValidateBoundProperties(entry.ActionDescriptor))
                         {
@@ -308,7 +308,7 @@ namespace UriGeneration.Internal
 
                 if (!bindingSourceFilter(bindingSource))
                 {
-                    _logger.DisallowedBindingSource(parameter.Name, bindingSource);
+                    _logger.DisallowedBindingSource(parameter.Name, bindingSource?.DisplayName);
                     continue;
                 }
 
