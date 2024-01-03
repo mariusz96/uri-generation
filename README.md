@@ -26,7 +26,7 @@ Func<BindingSource?, bool> bindingSourceFilter = bindingSource =>
     || bindingSource.CanAcceptDataFrom(BindingSource.Query)
     || bindingSource.CanAcceptDataFrom(BindingSource.Path);
 ```
-You pass null or default(T) to excluded action parameters when calling IUriGenerator.GetUriByExpression or a similar method.
+You should pass null or default(T) to excluded action parameters when calling IUriGenerator.GetUriByExpression or a similar method.
 
 For more information on binding sources, see ASP.NET Core documentation.
 
@@ -66,7 +66,7 @@ string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
 For more information on endpoint names, see ASP.NET Core documentation.
 
 ## Performance:
-Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent route values' values' expression trees only have to be compiled once.
+Extracting values from expression trees does introduce some overhead. To partially work around this problem, UriGeneration uses ASP.NET's CachedExpressionCompiler, so that equivalent action arguments' expression trees only have to be compiled once.
 
 Additionally, it uses its internal Microsoft.Extensions.Caching.Memory.MemoryCache instance to cache extracted action methods' metadata.
 
