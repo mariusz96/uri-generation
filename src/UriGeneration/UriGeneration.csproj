@@ -16,6 +16,7 @@
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>aspnetcore;aspnet;asp;net;core;routing;route;routes;url;urls;link;links;uri;uris;href;hrefs;hyper;reference;references;hyperlink;hyperlinks;path;paths;building;builder;builders;generation;generator;generators;linking;linker;linkers;helping;helper;helpers;linkgenerator;urlhelper;hateoas;hypermedia;as;the;engine;of;application;state;rest;restful;api;apis;webapi;webapis;mvc;web;service;services;webservice;webservices;resource;resources;representation;representations;discovery;discoverability;discoverable;discover;discovering;navigation;navigable;navigate;navigating;strongly;typed;expression;expressions;tree;trees;lambda;lambdas;cache;cached;caching;di;dependency;injection;ioc;inversion;of;control;rfc;5988;level3;level;3;roy;fielding;leonard;richardson;maturity;model</PackageTags>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
