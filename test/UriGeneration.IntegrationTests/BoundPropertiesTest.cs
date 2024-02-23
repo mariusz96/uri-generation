@@ -40,7 +40,7 @@ namespace UriGeneration.IntegrationTests
                 new FormUrlEncodedContent(model));
             var statusCode = response.StatusCode;
 
-            Assert.Equal(HttpStatusCode.NoContent, statusCode);
+            Assert.Equal(HttpStatusCode.NoContent, statusCode); // ASP.NET Core sets the status code to 204 if the content is null.
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace UriGeneration.IntegrationTests
                 new FormUrlEncodedContent(model));
             var statusCode = response.StatusCode;
 
-            Assert.Equal(HttpStatusCode.NoContent, statusCode);
+            Assert.Equal(HttpStatusCode.NoContent, statusCode); // ASP.NET Core sets the status code to 204 if the content is null.
         }
     }
 }
