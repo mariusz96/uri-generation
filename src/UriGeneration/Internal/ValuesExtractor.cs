@@ -134,8 +134,7 @@ namespace UriGeneration.Internal
                     }
                 }
 
-                if (!ValidateMethodConcreteness(method, controller)
-                    || !TryExtractActionDescriptor(method, actionDescriptors, out var descriptor))
+                if (!ValidateMethodConcreteness(method, controller))
                 {
                     if (bypassMethodCache is not true)
                     {
@@ -146,7 +145,8 @@ namespace UriGeneration.Internal
                     return false;
                 }
 
-                if (!ValidateBoundProperties(descriptor))
+                if (!TryExtractActionDescriptor(method, actionDescriptors, out var descriptor)
+                    || !ValidateBoundProperties(descriptor))
                 {
                     return false;
                 }
