@@ -41,107 +41,6 @@ namespace UriGeneration.Internal
                 throw new ArgumentNullException(nameof(expression));
             }
 
-            return GetPathByExpressionWithoutHttpContext(
-                expression,
-                endpointName,
-                pathBase,
-                fragment,
-                options);
-        }
-
-        public string? GetPathByExpression<TController>(
-           HttpContext httpContext,
-           Expression<Action<TController>> expression,
-           string? endpointName = null,
-           PathString? pathBase = null,
-           FragmentString fragment = default,
-           UriOptions? options = null)
-               where TController : class
-        {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            return GetPathByExpressionWithHttpContext(
-                httpContext,
-                expression,
-                endpointName,
-                pathBase,
-                fragment,
-                options);
-        }
-
-        public string? GetUriByExpression<TController>(
-            Expression<Action<TController>> expression,
-            string? endpointName,
-            string scheme,
-            HostString host,
-            PathString pathBase = default,
-            FragmentString fragment = default,
-            UriOptions? options = null)
-                where TController : class
-        {
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            return GetUriByExpressionWithoutHttpContext(
-                expression,
-                endpointName,
-                scheme,
-                host,
-                pathBase,
-                fragment,
-                options);
-        }
-
-        public string? GetUriByExpression<TController>(
-            HttpContext httpContext,
-            Expression<Action<TController>> expression,
-            string? endpointName = null,
-            string? scheme = null,
-            HostString? host = null,
-            PathString? pathBase = null,
-            FragmentString fragment = default,
-            UriOptions? options = null)
-                where TController : class
-        {
-            if (httpContext == null)
-            {
-                throw new ArgumentNullException(nameof(httpContext));
-            }
-
-            if (expression == null)
-            {
-                throw new ArgumentNullException(nameof(expression));
-            }
-
-            return GetUriByExpressionWithHttpContext(
-                httpContext,
-                expression,
-                endpointName,
-                scheme,
-                host,
-                pathBase,
-                fragment,
-                options);
-        }
-
-        private string? GetPathByExpressionWithoutHttpContext<TController>(
-            Expression<Action<TController>> expression,
-            string? endpointName = null,
-            PathString pathBase = default,
-            FragmentString fragment = default,
-            UriOptions? options = null)
-                where TController : class
-        {
             if (!_valuesExtractor.TryExtractValues(
                 httpContext: null,
                 expression,
@@ -172,15 +71,25 @@ namespace UriGeneration.Internal
             }
         }
 
-        private string? GetPathByExpressionWithHttpContext<TController>(
-            HttpContext httpContext,
-            Expression<Action<TController>> expression,
-            string? endpointName = null,
-            PathString? pathBase = null,
-            FragmentString fragment = default,
-            UriOptions? options = null)
-                where TController : class
+        public string? GetPathByExpression<TController>(
+           HttpContext httpContext,
+           Expression<Action<TController>> expression,
+           string? endpointName = null,
+           PathString? pathBase = null,
+           FragmentString fragment = default,
+           UriOptions? options = null)
+               where TController : class
         {
+            if (httpContext == null)
+            {
+                throw new ArgumentNullException(nameof(httpContext));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             if (!_valuesExtractor.TryExtractValues(
                 httpContext,
                 expression,
@@ -213,7 +122,7 @@ namespace UriGeneration.Internal
             }
         }
 
-        private string? GetUriByExpressionWithoutHttpContext<TController>(
+        public string? GetUriByExpression<TController>(
             Expression<Action<TController>> expression,
             string? endpointName,
             string scheme,
@@ -223,6 +132,11 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             if (!_valuesExtractor.TryExtractValues(
                 httpContext: null,
                 expression,
@@ -257,7 +171,7 @@ namespace UriGeneration.Internal
             }
         }
 
-        private string? GetUriByExpressionWithHttpContext<TController>(
+        public string? GetUriByExpression<TController>(
             HttpContext httpContext,
             Expression<Action<TController>> expression,
             string? endpointName = null,
@@ -268,6 +182,16 @@ namespace UriGeneration.Internal
             UriOptions? options = null)
                 where TController : class
         {
+            if (httpContext == null)
+            {
+                throw new ArgumentNullException(nameof(httpContext));
+            }
+
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
             if (!_valuesExtractor.TryExtractValues(
                 httpContext,
                 expression,
