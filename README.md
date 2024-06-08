@@ -1,8 +1,7 @@
 # Uri Generation
 A strongly typed URL generation library for ASP.NET Core:
 ```C#
-// uri:
-// https://localhost:44339/api/invoices/2
+// uri: https://localhost:44339/api/invoices/2
 string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
     c => c.GetInvoice(2));
@@ -54,16 +53,14 @@ app.MapControllerRoute(
 ```
 you can specify an endpoint name to generate an endpoint-specific URL:
 ```C#
-// uri:
-// https://localhost:44339/api/invoices/2
+// uri: https://localhost:44339/api/invoices/2
 string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
     c => c.GetInvoice(2),
     "ApiGetInvoice");
 ```
 ```C#
-// uri:
-// https://localhost:44339/invoices/2
+// uri: https://localhost:44339/invoices/2
 string? uri = _uriGenerator.GetUriByExpression<InvoicesController>(
     httpContext,
     c => c.GetInvoice(2),
