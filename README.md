@@ -91,7 +91,6 @@ builder.Services.AddUriGeneration();
 builder.Services.AddUriGeneration(options =>
 {
     options.MethodCacheSizeLimit = 500;
-    options.MethodCacheCompactionPercentage = 0.5;
     options.BypassMethodCache = false;
     options.BypassCachedExpressionCompiler = false;
     options.BindingSourceFilter = bindingSource =>
