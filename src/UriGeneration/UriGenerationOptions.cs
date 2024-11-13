@@ -14,12 +14,6 @@ namespace UriGeneration
         public long? MethodCacheSizeLimit { get; set; }
 
         /// <summary>
-        /// Gets or sets the amount to compact MethodCache by when the maximum size is exceeded.
-        /// </summary>
-        /// <value>Defaults to 0.5.</value>
-        public double? MethodCacheCompactionPercentage { get; set; }
-
-        /// <summary>
         /// Gets or sets a value indicating whether MethodCache should be bypassed.
         /// </summary>
         /// <value>Defaults to <see langword="false"/>.</value>
