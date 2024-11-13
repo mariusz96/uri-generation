@@ -26,7 +26,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test1());
+                controller => controller.Test1());
         }
 
         [HttpGet]
@@ -34,7 +34,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.VoidAction());
+                controller => controller.VoidAction());
         }
 
         [HttpPost]
@@ -48,7 +48,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetUriByExpression<AnotherAttributeRoutingController>(
                     HttpContext,
-                    c => c.Action());
+                    controller => controller.Action());
         }
 
         [HttpGet]
@@ -58,7 +58,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             var host = new HostString("localhost");
 
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
-                c => c.Test4(),
+                controller => controller.Test4(),
                 endpointName: null,
                 scheme,
                 host);
@@ -69,7 +69,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test5(value));
+                controller => controller.Test5(value));
         }
 
         [HttpGet]
@@ -77,7 +77,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test6(values));
+                controller => controller.Test6(values));
         }
 
         [HttpGet]
@@ -85,7 +85,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test7(value));
+                controller => controller.Test7(value));
         }
 
         [HttpGet]
@@ -93,7 +93,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test8(value));
+                controller => controller.Test8(value));
         }
 
         [HttpGet("{value}")]
@@ -101,7 +101,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test9(value));
+                controller => controller.Test9(value));
         }
 
         [HttpGet("{value}")]
@@ -109,7 +109,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test10(value));
+                controller => controller.Test10(value));
         }
 
         [HttpGet("{value2}")]
@@ -117,7 +117,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test11(value));
+                controller => controller.Test11(value));
         }
 
         [ActionName("ActionName")]
@@ -126,7 +126,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test12());
+                controller => controller.Test12());
         }
 
         [HttpPost]
@@ -134,7 +134,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test13(model));
+                controller => controller.Test13(model));
         }
 
         [HttpPost]
@@ -142,7 +142,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test14(model));
+                controller => controller.Test14(model));
         }
 
         [HttpGet]
@@ -150,7 +150,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test15(value));
+                controller => controller.Test15(value));
         }
 
         [HttpGet]
@@ -158,7 +158,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test16(service));
+                controller => controller.Test16(service));
         }
 
 #if NET8_0_OR_GREATER
@@ -167,7 +167,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test17(service));
+                controller => controller.Test17(service));
         }
 #endif
 
@@ -176,7 +176,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test18(file));
+                controller => controller.Test18(file));
         }
 
         [HttpPost]
@@ -184,7 +184,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test19(files));
+                controller => controller.Test19(files));
         }
 
         [HttpPost]
@@ -192,7 +192,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test20(files));
+                controller => controller.Test20(files));
         }
 
         [HttpGet]
@@ -200,7 +200,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test21(cancellationToken));
+                controller => controller.Test21(cancellationToken));
         }
 
         [HttpPost]
@@ -208,7 +208,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test22(form));
+                controller => controller.Test22(form));
         }
 
         [HttpGet("/EndpointName1/[action]", Name = "En1")]
@@ -217,7 +217,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test23(endpointName),
+                controller => controller.Test23(endpointName),
                 endpointName);
         }
 
@@ -227,7 +227,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return Task.FromResult(
                 _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                     HttpContext,
-                    c => c.Test24Async()));
+                    controller => controller.Test24Async()));
         }
 
         [HttpGet]
@@ -235,7 +235,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test25(),
+                controller => controller.Test25(),
                 options: new UriOptions
                 {
                     LinkOptions = new LinkOptions
@@ -250,7 +250,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test26(value),
+                controller => controller.Test26(value),
                 options: new UriOptions
                 {
                     BypassMethodCache = true,
@@ -264,7 +264,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test27());
+                controller => controller.Test27());
         }
 
         [HttpGet]
@@ -272,7 +272,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test28(value));
+                controller => controller.Test28(value));
         }
 
         [HttpGet]
@@ -280,7 +280,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<AttributeRoutingController>(
                 HttpContext,
-                c => c.Test29(value));
+                controller => controller.Test29(value));
         }
     }
 }

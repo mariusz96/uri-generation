@@ -18,7 +18,7 @@ namespace UriGeneration.IntegrationTests.Areas.Area1.Controllers
         {
             return _uriGenerator.GetUriByExpression<AreasController>(
                 HttpContext,
-                c => c.Action());
+                controller => controller.Action());
         }
 
         public string? Test2()
@@ -26,14 +26,14 @@ namespace UriGeneration.IntegrationTests.Areas.Area1.Controllers
             return _uriGenerator
                 .GetUriByExpression<Area2.Controllers.AreasController>(
                     HttpContext,
-                    c => c.Action());
+                    controller => controller.Action());
         }
 
         public string? Test3()
         {
             return _uriGenerator.GetUriByExpression<Areas.AreasController>(
                 HttpContext,
-                c => c.Action());
+                controller => controller.Action());
         }
     }
 }

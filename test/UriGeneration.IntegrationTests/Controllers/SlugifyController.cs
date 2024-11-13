@@ -18,7 +18,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<SlugifyController>(
                 HttpContext,
-                c => c.SlugTest1());
+                controller => controller.SlugTest1());
         }
     }
 }

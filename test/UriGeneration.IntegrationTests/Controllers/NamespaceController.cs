@@ -15,7 +15,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<NamespaceController>(
                 HttpContext,
-                c => c.Test1());
+                controller => controller.Test1());
         }
     }
 }

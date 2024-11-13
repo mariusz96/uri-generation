@@ -16,7 +16,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.Index());
+                    controller => controller.Index());
         }
 
         public string? Test1()
@@ -24,7 +24,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.Test1());
+                    controller => controller.Test1());
         }
 
         public string? Test2()
@@ -32,7 +32,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.VoidAction());
+                    controller => controller.VoidAction());
         }
 
         public void VoidAction()
@@ -44,7 +44,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<AnotherConventionalRoutingController>(
                     HttpContext,
-                    c => c.Index());
+                    controller => controller.Index());
         }
 
         public string? Test4()
@@ -52,7 +52,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<AnotherConventionalRoutingController>(
                     HttpContext,
-                    c => c.Action());
+                    controller => controller.Action());
         }
 
         public string? Test5()
@@ -60,7 +60,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.Test5());
+                    controller => controller.Test5());
         }
 
         public string? Test6(int value)
@@ -68,7 +68,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.Test6(value));
+                    controller => controller.Test6(value));
         }
 
         public string? Test7(int[] values)
@@ -76,7 +76,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.Test7(values));
+                    controller => controller.Test7(values));
         }
 
         public string? Test8(string routeName)
@@ -84,7 +84,7 @@ namespace UriGeneration.IntegrationTests.Controllers
             return _uriGenerator
                 .GetPathByExpression<ConventionalRoutingController>(
                     HttpContext,
-                    c => c.Test8(routeName),
+                    controller => controller.Test8(routeName),
                     routeName);
         }
     }

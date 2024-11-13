@@ -18,7 +18,7 @@ namespace UriGeneration.IntegrationTests.Controllers
         {
             return _uriGenerator.GetUriByExpression<BoundProperties1Controller>(
                 HttpContext,
-                c => c.Test1());
+                controller => controller.Test1());
         }
     }
 }

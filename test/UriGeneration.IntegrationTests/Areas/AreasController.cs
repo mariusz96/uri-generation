@@ -17,7 +17,7 @@ namespace UriGeneration.IntegrationTests.Areas
         {
             return _uriGenerator.GetUriByExpression<AreasController>(
                 HttpContext,
-                c => c.Action());
+                controller => controller.Action());
         }
 
         public string? Test2()
@@ -25,7 +25,7 @@ namespace UriGeneration.IntegrationTests.Areas
             return _uriGenerator
                 .GetUriByExpression<Area1.Controllers.AreasController>(
                     HttpContext,
-                    c => c.Action());
+                    controller => controller.Action());
         }
     }
 }
