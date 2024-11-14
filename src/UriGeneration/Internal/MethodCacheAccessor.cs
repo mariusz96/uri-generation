@@ -19,7 +19,8 @@ namespace UriGeneration.Internal
 
             Cache = new MemoryCache(new MemoryCacheOptions
             {
-                SizeLimit = globalOptions.MethodCacheSizeLimit ?? 500
+                SizeLimit = globalOptions.MethodCacheSizeLimit ?? 500,
+                CompactionPercentage = 0.95
             });
         }
 
