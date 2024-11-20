@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
 using System.Linq.Expressions;
 
 namespace UriGeneration
 {
     /// <summary>
-    /// A <see cref="LinkGenerator"/> adapter for lambda expressions.
+    /// Defines a contract to generate absolute and related URIs based on endpoint routing and lambda expressions.
     /// </summary>
     public interface IUriGenerator
     {
